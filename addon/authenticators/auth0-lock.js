@@ -1,4 +1,3 @@
-/* globals Auth0Lock, Auth0 */
 import Ember from 'ember';
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 
@@ -14,12 +13,12 @@ const {
   get,
   set,
   run,
-  $,
-  getOwner,
-  assert
+  assert,
+  inject
 } = Ember;
 
 export default BaseAuthenticator.extend({
+  auth0: inject.service(),
 
   //=======================
   // Properties
@@ -31,31 +30,6 @@ export default BaseAuthenticator.extend({
    */
   sessionData: null,
 
-  /**
-   * The env config found in the environment config.
-   * ENV['auth0-ember-simple-auth']
-   *
-   * @type {Object}
-   */
-  config: computed(function() {
-    let applicationConfig = getOwner(this).resolveRegistration('config:environment');
-    assert('ember-simple-auth config must be defined', applicationConfig['ember-simple-auth']);
-    assert('ember-simple-auth.auth0 config must be defined', applicationConfig['ember-simple-auth'].auth0);
-
-    return applicationConfig['ember-simple-auth'].auth0;
-  }),
-
-  /**
-   * The Auth0 App ClientID found in your Auth0 dashboard
-   * @type {String}
-   */
-  clientID: readOnly('config.clientID'),
-
-  /**
-   * The Auth0 App Domain found in your Auth0 dashboard
-   * @type {String}
-   */
-  domain: readOnly('config.domain'),
 
   /**
    * The auth0 userID.
@@ -112,8 +86,10 @@ export default BaseAuthenticator.extend({
 
   init() {
     set(this, 'sessionData', Ember.Object.create());
+
     this._super(...arguments);
   },
+
   //=======================
   // Hooks
   //=======================
@@ -134,6 +110,7 @@ export default BaseAuthenticator.extend({
   },
 
   restore(data) {
+
     get(this, 'sessionData').setProperties(data);
 
     if (get(this, 'jwtRemainingTime') < 1) {
@@ -145,14 +122,14 @@ export default BaseAuthenticator.extend({
     } else {
       this._setupFutureEvents();
 
-      return data;
+      return RSVP.resolve(data);
     }
   },
 
   authenticate(options) {
     assert('Options must be passed to authenticate in order to create the Auth0Instance', options);
 
-    let lock = this._getAuth0LockInstance(options);
+    let lock = get(this, 'auth0').getAuth0LockInstance(options);
 
     return new RSVP.Promise((resolve, reject) => {
       lock.on('unrecoverable_error', reject);
@@ -163,14 +140,7 @@ export default BaseAuthenticator.extend({
             return reject(error);
           }
 
-          let sessionData = {
-            profile,
-            jwt: authenticatedData.idToken,
-            exp: authenticatedData.idTokenPayload.exp,
-            iat: authenticatedData.idTokenPayload.iat,
-            accessToken: authenticatedData.accessToken,
-            refreshToken: authenticatedData.refreshToken
-          };
+          let sessionData = get(this, 'auth0').createSessionDataObject(profile, authenticatedData);
 
           get(this, 'sessionData').setProperties(sessionData);
           this._setupFutureEvents(sessionData);
@@ -203,18 +173,6 @@ export default BaseAuthenticator.extend({
   //=======================
   // Private Methods
   //=======================
-  _makeAuth0Request(url, method) {
-    let headers = {
-      Authorization: `Bearer ${get(this, 'jwt')}`
-    };
-
-    return $.ajax(url,
-      {
-        type: method,
-        headers: headers
-      });
-  },
-
   _setupFutureEvents() {
     this._clearJobs();
     this._scheduleExpire();
@@ -256,7 +214,7 @@ export default BaseAuthenticator.extend({
 
   _refreshAuth0Token() {
     return new RSVP.Promise((resolve, reject) => {
-      let auth0 = this._getAuth0Instance();
+      let auth0 = get(this, 'auth0').getAuth0Instance();
       auth0.refreshToken(get(this, 'refreshToken'), (err, result) => {
         if (err) {
           reject(err);
@@ -279,16 +237,5 @@ export default BaseAuthenticator.extend({
 
   _refreshAccessToken() {
     this._refreshAuth0Token().then(data => this.trigger('sessionDataUpdated', data));
-  },
-
-  _getAuth0LockInstance(options) {
-    return new Auth0Lock(get(this, 'clientID'), get(this, 'domain'), options);
-  },
-
-  _getAuth0Instance() {
-    return new Auth0({
-      domain: get(this, 'domain'),
-      clientID: get(this, 'clientID')
-    });
   },
 });
