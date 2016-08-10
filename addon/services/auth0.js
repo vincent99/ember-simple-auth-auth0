@@ -39,6 +39,8 @@ export default Service.extend({
    */
   domain: readOnly('config.domain'),
 
+  redirectURI: readOnly('config.redirectURI'),
+
   getAuth0LockInstance(options) {
     return new Auth0Lock(
       get(this, 'clientID'),
