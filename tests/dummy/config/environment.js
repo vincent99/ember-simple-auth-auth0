@@ -1,4 +1,5 @@
 /* jshint node: true */
+require('dotenv').config();
 
 module.exports = function(environment) {
   var ENV = {
@@ -41,6 +42,17 @@ module.exports = function(environment) {
   if (environment === 'production') {
 
   }
+
+  ENV['ember-simple-auth'] = {
+    authentication: 'login',
+    routeAfterAuthentication: 'protected',
+    routeIfAlreadyAuthenticated: 'protected',
+    auth0: {
+      clientID: process.env.AUTH0_CLIENT_ID,
+      domain: process.env.AUTH0_DOMAIN,
+      redirectURI: 'login'
+    }
+  };
 
   return ENV;
 };
