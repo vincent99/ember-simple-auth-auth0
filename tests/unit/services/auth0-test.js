@@ -1,12 +1,89 @@
-import { moduleFor, test } from 'ember-qunit';
+import Ember from 'ember';
+import {
+  moduleFor,
+  test
+} from 'ember-qunit';
+
+const {
+  get
+} = Ember;
 
 moduleFor('service:auth0', 'Unit | Service | auth0', {
   // Specify the other units that are required for this test.
   // needs: ['service:foo']
 });
 
-// Replace this with your real tests.
-test('it exists', function(assert) {
+function windowLocation() {
+  return [
+    window.location.protocol,
+    '//',
+    window.location.host,
+  ].join('');
+}
+
+test('it calculates the redirectURL correctly with rootURL', function(assert) {
+  const config = {
+    rootURL: '/test',
+    ['ember-simple-auth']: {
+      authenticationRoute: 'login',
+      auth0: {}
+    }
+  };
+
+  this.register('config:environment', config);
+
   let service = this.subject();
-  assert.ok(service);
+  assert.equal(get(service, 'redirectURL'),
+    `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
+});
+
+test('it calculates the redirectURL correctly with baseURL', function(assert) {
+  const config = {
+    baseURL: '/test',
+    ['ember-simple-auth']: {
+      authenticationRoute: 'login',
+      auth0: {}
+    }
+  };
+
+  this.register('config:environment', config);
+
+  let service = this.subject();
+  assert.equal(get(service, 'redirectURL'),
+    `${windowLocation()}${config.baseURL}/${config['ember-simple-auth'].authenticationRoute}`);
+});
+
+test('it calculates the redirectURL correctly giving rootURL precedence', function(assert) {
+  const config = {
+    baseURL: '/test',
+    rootURL: '/testroot',
+    ['ember-simple-auth']: {
+      authenticationRoute: 'login',
+      auth0: {}
+    }
+  };
+
+  this.register('config:environment', config);
+
+  let service = this.subject();
+  assert.equal(get(service, 'redirectURL'),
+    `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
+});
+
+test('it calculates the redirectURL correctly giving redirectURI precedence', function(assert) {
+  const config = {
+    rootURL: '/test',
+    ['ember-simple-auth']: {
+      authenticationRoute: 'login',
+      auth0: {
+        redirectURI: 'my-login'
+      }
+    }
+  };
+
+  this.register('config:environment', config);
+
+  let service = this.subject();
+  assert.equal(get(service, 'redirectURL'),
+    `${windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
 });

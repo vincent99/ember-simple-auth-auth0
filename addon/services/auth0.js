@@ -115,11 +115,8 @@ export default Service.extend({
         loginURI = redirectURI;
       }
 
-      if (loginURI.startsWith('/')) {
-        loginURI = loginURI.substr(1);
-      }
-
-      return loginURI;
+      // Strip all leading / (slash) because we will add it back in during the redirectURL creation
+      return loginURI.replace(/(^[/\s]+)/g, '');
     }
   }),
   _redirectURI: readOnly('config.redirectURI'),
