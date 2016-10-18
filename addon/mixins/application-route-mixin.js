@@ -14,6 +14,7 @@ const {
 
 export default Mixin.create(ApplicationRouteMixin, {
   auth0: service(),
+
   /**
    * This has to be overridden because the default behavior prevents
    * auth0 to logout correctly.
