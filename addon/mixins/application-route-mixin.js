@@ -4,8 +4,6 @@ import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mi
 
 const {
   Mixin,
-  getOwner,
-  assert,
   computed,
   get,
   RSVP,
@@ -16,13 +14,6 @@ const {
 
 export default Mixin.create(ApplicationRouteMixin, {
   auth0: service(),
-  config: computed(function() {
-    let applicationConfig = getOwner(this).resolveRegistration('config:environment');
-    assert('ember-simple-auth config must be defined', applicationConfig['ember-simple-auth']);
-    assert('ember-simple-auth.auth0 config must be defined', applicationConfig['ember-simple-auth'].auth0);
-
-    return applicationConfig['ember-simple-auth'].auth0;
-  }),
   /**
    * This has to be overridden because the default behavior prevents
    * auth0 to logout correctly.
@@ -57,8 +48,8 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _getAuth0Instance() {
     return new Auth0({
-      domain: get(this, 'config.domain'),
-      clientID: get(this, 'config.clientID')
+      domain: get(this, 'auth0.domain'),
+      clientID: get(this, 'auth0.clientID')
     });
   },
 });
