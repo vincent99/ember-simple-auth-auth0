@@ -8,10 +8,14 @@ const {
   assert,
   computed,
   get,
-  RSVP
+  RSVP,
+  inject: {
+    service
+  }
 } = Ember;
 
 export default Mixin.create(ApplicationRouteMixin, {
+  auth0: service(),
   config: computed(function() {
     let applicationConfig = getOwner(this).resolveRegistration('config:environment');
     assert('ember-simple-auth config must be defined', applicationConfig['ember-simple-auth']);
@@ -24,6 +28,7 @@ export default Mixin.create(ApplicationRouteMixin, {
    * auth0 to logout correctly.
    */
   sessionInvalidated() {
+    get(this, 'auth0').navigateToLogoutURL();
   },
 
   beforeModel() {

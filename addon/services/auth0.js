@@ -8,8 +8,10 @@ const {
     readOnly
   },
   get,
+  getProperties,
   getOwner,
   assert,
+  testing
 } = Ember;
 
 export default Service.extend({
@@ -41,6 +43,17 @@ export default Service.extend({
 
   redirectURI: readOnly('config.redirectURI'),
 
+  redirectURL: computed(function() {
+    let loginURI = get(this, 'redirectURI');
+    return [
+      window.location.protocol,
+      '//',
+      window.location.host,
+      '/',
+      loginURI
+    ].join('');
+  }),
+
   getAuth0LockInstance(options) {
     return new Auth0Lock(
       get(this, 'clientID'),
@@ -67,5 +80,17 @@ export default Service.extend({
       accessToken: tokenInfo.accessToken,
       refreshToken: tokenInfo.refreshToken
     };
+  },
+
+  navigateToLogoutURL() {
+    const {
+      domain,
+      redirectURL,
+      clientID
+    } = getProperties(this, 'domain', 'redirectURL', 'clientID');
+
+    if (!testing) {
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${redirectURL}&client_id=${clientID}`);
+    }
   }
 });
