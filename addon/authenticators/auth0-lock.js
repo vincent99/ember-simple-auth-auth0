@@ -152,20 +152,8 @@ export default BaseAuthenticator.extend({
     });
   },
 
-  redirectURL: computed(function() {
-    let loginURI = get(this, 'auth0.redirectURI');
-    return [
-      window.location.protocol,
-      '//',
-      window.location.host,
-      '/',
-      loginURI
-    ].join('');
-  }),
-
   invalidate(/* data */) {
-    window.location.replace(`https://${get(this, 'auth0.domain')}/v2/logout?returnTo=${get(this,
-      'redirectURL')}&client_id=${get(this, 'auth0.clientID')}`);
+    get(this, 'auth0').navigateToLogoutURL();
 
     return this._super(...arguments);
   },
