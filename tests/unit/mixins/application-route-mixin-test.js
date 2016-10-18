@@ -1,17 +1,26 @@
 import Ember from 'ember';
 import ApplicationRouteMixinMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
+import getOwner from 'ember-getowner-polyfill';
+
 import {
-  module,
+  moduleFor,
   test
-} from '../../helpers/qunit';
+} from 'ember-qunit';
 
-module('Unit | Mixin | application route mixin');
+moduleFor('mixin:application-route-mixin', 'Unit | Mixin | application route mixin', {
+  needs: ['service:session', 'service:auth0'],
 
-// Replace this with your real tests.
+  subject() {
+    let ApplicationRouteMixinObject = Ember.Object.extend(ApplicationRouteMixinMixin, {
+      _subscribeToSessionEvents() {}
+    });
+
+    this.register('test-container:application-route-mixin-object', ApplicationRouteMixinObject);
+    return getOwner(this).lookup('test-container:application-route-mixin-object');
+  }
+});
+
 test('it works', function(assert) {
-  let ApplicationRouteMixinObject = Ember.Object.extend(ApplicationRouteMixinMixin, {
-    _subscribeToSessionEvents() {}
-  });
-  let subject = ApplicationRouteMixinObject.create({ container: this.container });
+  let subject = this.subject();
   assert.ok(subject);
 });
