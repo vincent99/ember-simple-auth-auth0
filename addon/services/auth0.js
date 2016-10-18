@@ -11,7 +11,8 @@ const {
   getProperties,
   getOwner,
   assert,
-  testing
+  testing,
+  isPresent
 } = Ember;
 
 export default Service.extend({
@@ -22,36 +23,11 @@ export default Service.extend({
    * @type {Object}
    */
   config: computed(function() {
-    let applicationConfig = getOwner(this).resolveRegistration('config:environment');
-    assert('ember-simple-auth config must be defined', applicationConfig['ember-simple-auth']);
-    assert('ember-simple-auth.auth0 config must be defined', applicationConfig['ember-simple-auth'].auth0);
+    let emberSimpleAuthConfig = get(this, '_emberSimpleAuthConfig');
+    assert('ember-simple-auth config must be defined', emberSimpleAuthConfig);
+    assert('ember-simple-auth.auth0 config must be defined', emberSimpleAuthConfig.auth0);
 
-    return applicationConfig['ember-simple-auth'].auth0;
-  }),
-
-  /**
-   * The Auth0 App ClientID found in your Auth0 dashboard
-   * @type {String}
-   */
-  clientID: readOnly('config.clientID'),
-
-  /**
-   * The Auth0 App Domain found in your Auth0 dashboard
-   * @type {String}
-   */
-  domain: readOnly('config.domain'),
-
-  redirectURI: readOnly('config.redirectURI'),
-
-  redirectURL: computed(function() {
-    let loginURI = get(this, 'redirectURI');
-    return [
-      window.location.protocol,
-      '//',
-      window.location.host,
-      '/',
-      loginURI
-    ].join('');
+    return emberSimpleAuthConfig.auth0;
   }),
 
   getAuth0LockInstance(options) {
@@ -84,13 +60,76 @@ export default Service.extend({
 
   navigateToLogoutURL() {
     const {
-      domain,
-      redirectURL,
-      clientID
-    } = getProperties(this, 'domain', 'redirectURL', 'clientID');
+      _domain,
+      _redirectURL,
+      _clientID
+    } = getProperties(this, '_domain', '_redirectURL', '_clientID');
 
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${redirectURL}&client_id=${clientID}`);
+      window.location.replace(`https://${_domain}/v2/logout?returnTo=${_redirectURL}&client_id=${_clientID}`);
     }
-  }
+  },
+
+  _environmentConfig: computed({
+    get() {
+      return getOwner(this).resolveRegistration('config:environment');
+    }
+  }),
+
+  _emberSimpleAuthConfig: computed({
+    get() {
+      return get(this, '_environmentConfig')['ember-simple-auth'];
+    }
+  }),
+  /**
+   * The Auth0 App ClientID found in your Auth0 dashboard
+   * @type {String}
+   */
+  _clientID: readOnly('config.clientID'),
+
+  /**
+   * The Auth0 App Domain found in your Auth0 dashboard
+   * @type {String}
+   */
+  _domain: readOnly('config.domain'),
+
+  _redirectURL: computed({
+    get() {
+      let loginURI = get(this, '_loginURI');
+
+      return [
+        window.location.protocol,
+        '//',
+        window.location.host,
+        loginURI
+      ].join('');
+    }
+  }),
+
+  _loginURI: computed({
+    get() {
+      let redirectURI = get(this, '_redirectURI');
+      let loginURI = `${get(this, '_rootURL')}/${get(this, '_authenticationRoute')}`;
+      if (isPresent(redirectURI)) {
+        loginURI = redirectURI;
+      }
+
+      return loginURI;
+    }
+  }),
+  _redirectURI: readOnly('config.redirectURI'),
+  _rootURL: computed({
+    get() {
+      let rootURL = get(this, '_environmentConfig.rootURL');
+      if (isPresent(rootURL)) {
+        return rootURL;
+      }
+
+      // NOTE: this is for backwards compatibility for those who are not yet using rootURL
+      return get(this, '_baseURL');
+    }
+  }),
+
+  _baseURL: readOnly('_environmentConfig.baseURL'),
+  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute')
 });
