@@ -1,5 +1,6 @@
 /* globals Auth0Lock, Auth0 */
 import Ember from 'ember';
+import getOwner from 'ember-getowner-polyfill';
 
 const {
   Service,
@@ -9,7 +10,6 @@ const {
   },
   get,
   getProperties,
-  getOwner,
   assert,
   testing,
   isPresent
