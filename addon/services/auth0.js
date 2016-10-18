@@ -60,13 +60,13 @@ export default Service.extend({
 
   navigateToLogoutURL() {
     const {
-      _domain,
-      _redirectURL,
-      _clientID
-    } = getProperties(this, '_domain', '_redirectURL', '_clientID');
+      domain,
+      redirectURL,
+      clientID
+    } = getProperties(this, 'domain', 'redirectURL', 'clientID');
 
     if (!testing) {
-      window.location.replace(`https://${_domain}/v2/logout?returnTo=${_redirectURL}&client_id=${_clientID}`);
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${redirectURL}&client_id=${clientID}`);
     }
   },
 
@@ -85,15 +85,15 @@ export default Service.extend({
    * The Auth0 App ClientID found in your Auth0 dashboard
    * @type {String}
    */
-  _clientID: readOnly('config.clientID'),
+  clientID: readOnly('config.clientID'),
 
   /**
    * The Auth0 App Domain found in your Auth0 dashboard
    * @type {String}
    */
-  _domain: readOnly('config.domain'),
+  domain: readOnly('config.domain'),
 
-  _redirectURL: computed({
+  redirectURL: computed({
     get() {
       let loginURI = get(this, '_loginURI');
 
@@ -101,6 +101,7 @@ export default Service.extend({
         window.location.protocol,
         '//',
         window.location.host,
+        '/',
         loginURI
       ].join('');
     }
@@ -112,6 +113,10 @@ export default Service.extend({
       let loginURI = `${get(this, '_rootURL')}/${get(this, '_authenticationRoute')}`;
       if (isPresent(redirectURI)) {
         loginURI = redirectURI;
+      }
+
+      if (loginURI.startsWith('/')) {
+        loginURI = loginURI.substr(1);
       }
 
       return loginURI;
