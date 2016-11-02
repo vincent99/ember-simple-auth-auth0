@@ -39,20 +39,26 @@
     "ember-load-initializers": "^0.5.1",
     "ember-moment": "stefanpenner/ember-moment#master",
     "ember-resolver": "^2.1.0",
-    "ember-simple-auth": "1.1.0",
-    "loader.js": "^4.0.1"
+    "loader.js": "^4.0.1",
+    "rsvp": "^3.3.3"
   },
   "keywords": [
     "ember-addon",
     "ember-simple-auth",
     "lock.js",
     "auth0",
-    "authentication"
+    "authentication",
+    "jwt",
+    "authorization"
   ],
   "dependencies": {
-    "ember-cli-babel": "^5.1.6"
+    "ember-cli-babel": "^5.1.6",
+    "ember-simple-auth": "1.1.0"
   },
   "ember-addon": {
-    "configPath": "tests/dummy/config"
+    "configPath": "tests/dummy/config",
+    "after": [
+      "ember-simple-auth"
+    ]
   }
 }
