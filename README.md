@@ -77,38 +77,42 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 ```json
 {
   "authenticated": {
-    "authenticator": "authenticator:auth0-lock",
+    "authenticator": "authenticator:auth0-impersonation",
     "email": "foo@bar.com",
+    "impersonated": true,
+    "impersonator": {
+      "user_id": "google-oauth2|108251222085688410292",
+      "email": "impersonator@bar.com"
+    },
     "appMetadata": {
     },
     "userMetadata": {
     },
     "emailVerified": true,
-    "clientID": "YwDY9D433seMHCred7j0BESjlnwF7ry8",
-    "updatedAt": "2016-11-02T20:25:41.892Z",
-    "userId": "auth0|0ba14c34-2247-40f9-b918-292a4bab8995",
+    "clientID": "YwDY9D433veMHC2e27j2BESjlnwF7ry8",
+    "updatedAt": "2016-11-02T23:28:06.864Z",
+    "userId": "auth0|da71a38d-3d2a-4281-8dfa-504ed0acd598",
     "identities": [
       {
-        "user_id": "0ba04c34-2447-40f9-b918-292a4bab8995",
+        "user_id": "da71a38d-3de2-4281-8dfa-504ed0acd598",
         "provider": "auth0",
         "connection": "DB",
         "isSocial": false
       }
     ],
-    "createdAt": "2016-03-29T18:47:22.112Z",
-    "globalClientId": "IW2jtMb1aRIz0pOwPdN2Ciuh2uIdzfyQ",
-    "accessToken": "AFitss4o7L2xb41p",
-    "idToken": "aaaa.bbbbb.cccc",
+    "createdAt": "2016-04-01T21:03:24.847Z",
+    "globalClientId": "I22jtMbdaRIz0pOwPdN2Ciuh2uIdzfy2",
+    "accessToken": "OfevAkQ5ar42HA2j",
+    "idToken": "aaaa.bbb.cccc",
     "idTokenPayload": {
       "iss": "https://domain.auth0.com/",
-      "sub": "auth0|0ba04c32-2247-40f9-b918-292a4bab8995",
-      "aud": "YwDY9D433veMH2red7j0BESjlnwF7ry8",
-      "exp": 1478618342,
-      "iat": 1478118342
+      "sub": "auth0|da71a382-3dea-2281-8dfa-204ed0acd598",
+      "aud": "Yw2Y9D433veMHCred7j0BESjlnwF7r28",
+      "exp": 1478629287,
+      "iat": 1478129287
     }
   }
 }
-
 ```
 
 __You can use this in your templates that have the session service injected.__
