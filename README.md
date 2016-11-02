@@ -148,7 +148,7 @@ export default Route.extend(ApplicationRouteMixin, {
         }
       };
       
-      get(this, 'session').authenticate('authenticator:my-cool-authenticator', lockOptions);
+      get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
     },
 
     logout () {
