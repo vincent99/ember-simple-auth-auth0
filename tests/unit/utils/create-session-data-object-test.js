@@ -2,9 +2,7 @@ import Ember from 'ember';
 import createSessionDataObject from 'dummy/utils/create-session-data-object';
 import { module, test } from 'qunit';
 
-const {
-  assign
-} = Ember;
+const assign = Ember.assign || Ember.merge;
 
 module('Unit | Utility | create session data object');
 

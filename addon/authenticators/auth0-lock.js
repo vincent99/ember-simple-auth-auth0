@@ -5,11 +5,12 @@ import createSessionDataObject from '../utils/create-session-data-object';
 const {
   RSVP,
   get,
-  assign,
   inject: {
     service
   }
 } = Ember;
+
+const assign = Ember.assign || Ember.merge;
 
 export default BaseAuthenticator.extend({
   auth0: service(),

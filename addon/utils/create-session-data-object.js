@@ -1,11 +1,12 @@
 import Ember from 'ember';
 
 const {
-  assign,
   String: {
     camelize
   }
 } = Ember;
+
+const assign = Ember.assign || Ember.merge;
 
 export default function createSessionDataObject(profile, tokenInfo) {
   let sessionData = assign(profile, tokenInfo);
