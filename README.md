@@ -33,7 +33,12 @@ If you don't already have an account, go signup at for free: [Auth0](https://aut
 1. (REQUIRED) - _clientID_ - Grab from your[Auth0 Dashboard](https://manage.auth0.com/#/clients)
 2. (REQUIRED) - _domain_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 3. (OPTIONAL) - _logoutURL_ - This can be overridden if you have a different logout callback than the login page. This will be used as the redirectURL passed to auth0 upon logging out.
+The logoutURL that is actually gets used is constructed as follows:
+* if you are using ember-cli < 2.8 it will prefix the logout url with `ENV.baseURL`, otherwise it will use `ENV.rootURL`
+* if `ember-simple-auth.auth0.logoutURL` is defined then it will use that, otherwise it will fallback to using `ember-simple-auth.authenticationRoute`
 
+> Example `${ENV.rootURL}/${ENV['ember-simple-auth].auth0.logoutURL`
+  
 ```js
 // config/environment.js
 module.exports = function(environment) {
@@ -53,7 +58,7 @@ module.exports = function(environment) {
 
 ### Suggested security config
 
-Ember uses a [content security policy](http://www.html5rocks.com/en/tutorials/security/content-security-policy/) to manage which resources are allowed to be run on your pages.
+> If you are still using [content security policy](http://www.html5rocks.com/en/tutorials/security/content-security-policy/) to manage which resources are allowed to be run on your pages. Please add the following CSP rule.
 
 ```js
 // config/environment.js
@@ -77,13 +82,8 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 ```json
 {
   "authenticated": {
-    "authenticator": "authenticator:auth0-impersonation",
+    "authenticator": "authenticator:auth0-lock",
     "email": "foo@bar.com",
-    "impersonated": true,
-    "impersonator": {
-      "user_id": "google-oauth2|108251222085688410292",
-      "email": "impersonator@bar.com"
-    },
     "appMetadata": {
     },
     "userMetadata": {
@@ -121,6 +121,29 @@ __You can use this in your templates that have the session service injected.__
 My logged in user email is {{session.data.authenticated.email}}!
 ```
 
+## Impersonation
+
+> This addon supports native impersonation support. Just follow the instructions on Auth0's documentation and you will be logged in.
+
+https://auth0.com/docs/user-profile/user-impersonation
+
+__The new session object will include the following fields__
+
+```json
+{
+  "authenticated": {
+    "authenticator": "authenticator:auth0-impersonation",
+    ...
+    "impersonated": true,
+    "impersonator": {
+      "user_id": "google-oauth2|108251222085688410292",
+      "email": "impersonator@bar.com"
+    }
+    ...
+  }
+}
+```
+
 ## Example
 __Here is an example application route:__
 
@@ -131,8 +154,7 @@ import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
 
 const {
-  Route,
-  get
+  Route
 } = Ember;
 
 export default Route.extend(ApplicationRouteMixin, {
@@ -141,23 +163,6 @@ export default Route.extend(ApplicationRouteMixin, {
     // Notify the user that they are about to be logged out.
     
     return RSVP.resolve();
-  },
-  actions: {
-    login () {
-      // Check out the docs for all the options:
-      // https://auth0.com/docs/libraries/lock/customization
-      const lockOptions = {
-        authParams: {
-          scope: 'openid'
-        }
-      };
-      
-      get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
-    },
-
-    logout () {
-      get(this, 'session').invalidate();
-    }
   }
 });
 
@@ -174,11 +179,32 @@ const {
   Controller,
   inject: {
     service
-  }
+  },
+  get
 } = Ember;
 
 export default Controller.extend({
-  session: service()
+  session: service(),
+ actions: {
+    login () {
+      // Check out the docs for all the options:
+      // https://auth0.com/docs/libraries/lock/customization
+      const lockOptions = {
+       autoclose: true,
+       auth: {
+         params: {
+           scope: 'openid'
+         }
+       }
+      };
+      
+      get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
+    },
+
+    logout () {
+      get(this, 'session').invalidate();
+    }
+  }
 });
 ```
 
@@ -186,9 +212,11 @@ export default Controller.extend({
 // app/templates/application.hbs
 
 {{#if session.isAuthenticated}}
-  <a {{ action 'logout' }}>Logout</a>
+  You are currently logged as: {{session.data.authenticated.email}}
+
+  <a {{ action "logout" }}>Logout</a>
 {{else}}
-  <a {{ action 'login' }}>Login</a>
+  <a {{ action "login" }}>Login</a>
 {{/if}}
 ```
 
@@ -202,8 +230,8 @@ export default Controller.extend({
 
 ## Running
 
-* Set the environment variable AUTH0_CLIENT_ID_ID={Your account id}
-* Set the environment variable AUTH0_DOMAIN={Your account domain}
+* Set the environment variable `AUTH0_CLIENT_ID_ID={Your account id}`
+* Set the environment variable `AUTH0_DOMAIN={Your account domain}`
 * Grab from your those from the [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 * `ember serve`
 * Visit your app at [http://localhost:4200](http://localhost:4200).
