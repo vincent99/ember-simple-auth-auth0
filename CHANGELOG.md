@@ -1,6 +1,11 @@
 Changelog
 =========
 
+## v1.0.1 (November 3rd, 2016)
+
+- [#8](https://github.com/seawatts/ember-simple-auth-auth0/pull/8) **fix:** issue where after auth would not redirect correctly *by [@seawatts](https://github.com/seawatts)*
+
+
 ## v1.0.0 (November 2nd, 2016)
 
 ### Breaking Changes
