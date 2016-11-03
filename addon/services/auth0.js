@@ -48,7 +48,7 @@ export default Service.extend({
    */
   domain: readOnly('config.domain'),
 
-  redirectURL: computed({
+  logoutURL: computed({
     get() {
       const loginURI = get(this, '_loginURI');
       let location = `${window.location.protocol}//${window.location.host}`;
@@ -85,12 +85,12 @@ export default Service.extend({
   navigateToLogoutURL() {
     const {
       domain,
-      redirectURL,
+      logoutURL,
       clientID
-    } = getProperties(this, 'domain', 'redirectURL', 'clientID');
+    } = getProperties(this, 'domain', 'logoutURL', 'clientID');
 
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${redirectURL}&client_id=${clientID}`);
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
     }
   },
 
@@ -124,7 +124,7 @@ export default Service.extend({
         loginURI = _redirectURI;
       }
 
-      // Strip all leading / (slash) because we will add it back in during the redirectURL creation
+      // Strip all leading / (slash) because we will add it back in during the logoutURL creation
       return loginURI.replace(/(^[/\s]+)/g, '');
     }
   }),
