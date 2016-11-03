@@ -5,7 +5,7 @@ import createSessionDataObject from '../utils/create-session-data-object';
 const {
   RSVP,
   get,
-  assert,
+  assign,
   inject: {
     service
   }
@@ -14,7 +14,17 @@ const {
 export default BaseAuthenticator.extend({
   auth0: service(),
   authenticate(options) {
-    assert('Options must be passed to authenticate in order to create the Auth0Instance', options);
+    let defaultOptions = {
+      autoclose: true,
+      auth: {
+        redirect: false,
+        params: {
+          scope: 'openid'
+        }
+      }
+    };
+
+    options = assign(defaultOptions, options);
 
     return new RSVP.Promise((resolve, reject) => {
       const lock = get(this, 'auth0').getAuth0LockInstance(options);

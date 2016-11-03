@@ -21,7 +21,7 @@ function windowLocation() {
   ].join('');
 }
 
-test('it calculates the redirectURL correctly with rootURL', function(assert) {
+test('it calculates the logoutURL correctly with rootURL', function(assert) {
   const config = {
     rootURL: '/test',
     ['ember-simple-auth']: {
@@ -33,11 +33,11 @@ test('it calculates the redirectURL correctly with rootURL', function(assert) {
   this.register('config:environment', config);
 
   let service = this.subject();
-  assert.equal(get(service, 'redirectURL'),
+  assert.equal(get(service, 'logoutURL'),
     `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
-test('it calculates the redirectURL correctly with baseURL', function(assert) {
+test('it calculates the logoutURL correctly with baseURL', function(assert) {
   const config = {
     baseURL: '/test',
     ['ember-simple-auth']: {
@@ -49,11 +49,11 @@ test('it calculates the redirectURL correctly with baseURL', function(assert) {
   this.register('config:environment', config);
 
   let service = this.subject();
-  assert.equal(get(service, 'redirectURL'),
+  assert.equal(get(service, 'logoutURL'),
     `${windowLocation()}${config.baseURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
-test('it calculates the redirectURL correctly giving rootURL precedence', function(assert) {
+test('it calculates the logoutURL correctly giving rootURL precedence', function(assert) {
   const config = {
     baseURL: '/test',
     rootURL: '/testroot',
@@ -66,11 +66,11 @@ test('it calculates the redirectURL correctly giving rootURL precedence', functi
   this.register('config:environment', config);
 
   let service = this.subject();
-  assert.equal(get(service, 'redirectURL'),
+  assert.equal(get(service, 'logoutURL'),
     `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
-test('it calculates the redirectURL correctly giving redirectURI precedence', function(assert) {
+test('it calculates the logoutURL correctly giving redirectURI precedence', function(assert) {
   const config = {
     rootURL: '/test',
     ['ember-simple-auth']: {
@@ -84,6 +84,6 @@ test('it calculates the redirectURL correctly giving redirectURI precedence', fu
   this.register('config:environment', config);
 
   let service = this.subject();
-  assert.equal(get(service, 'redirectURL'),
+  assert.equal(get(service, 'logoutURL'),
     `${windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
 });
