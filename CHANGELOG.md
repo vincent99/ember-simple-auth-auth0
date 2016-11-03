@@ -1,10 +1,14 @@
 Changelog
 =========
 
+## v1.0.2 (November 3rd, 2016)
+
+- [#9](https://github.com/seawatts/ember-simple-auth-auth0/pull/9) **fix:** issue where jwt authorizer wasn't adding the jwt to the block *by [@seawatts](https://github.com/seawatts)*
+- Fixed an issue where `ember install` or `ember generate` would fail because `rsvp` was in `devDependencies` instead of `dependencies`
+
 ## v1.0.1 (November 3rd, 2016)
 
 - [#8](https://github.com/seawatts/ember-simple-auth-auth0/pull/8) **fix:** issue where after auth would not redirect correctly *by [@seawatts](https://github.com/seawatts)*
-
 
 ## v1.0.0 (November 2nd, 2016)
 
