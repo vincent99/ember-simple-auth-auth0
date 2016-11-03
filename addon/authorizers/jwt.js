@@ -6,8 +6,8 @@ const {
 
 export default BaseAuthorizer.extend({
   authorize(sessionData, block) {
-    const tokenAttributeName = 'jwt';
-    const userToken = sessionData[tokenAttributeName];
+    const userToken = sessionData['idToken'];
+
     if (!isEmpty(userToken)) {
       block('Authorization', `Bearer ${userToken}`);
     }
