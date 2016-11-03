@@ -6,67 +6,91 @@ const {
   Service,
   computed,
   computed: {
-    readOnly
+    readOnly,
   },
   get,
   getProperties,
   assert,
   testing,
-  isPresent
+  isPresent,
+  inject: {
+    service
+  }
 } = Ember;
 
 export default Service.extend({
+  session: service(),
   /**
    * The env config found in the environment config.
    * ENV['auth0-ember-simple-auth']
    *
    * @type {Object}
    */
-  config: computed(function() {
-    let emberSimpleAuthConfig = get(this, '_emberSimpleAuthConfig');
-    assert('ember-simple-auth config must be defined', emberSimpleAuthConfig);
-    assert('ember-simple-auth.auth0 config must be defined', emberSimpleAuthConfig.auth0);
+  config: computed({
+    get() {
+      const emberSimpleAuthConfig = get(this, '_emberSimpleAuthConfig');
+      assert('ember-simple-auth config must be defined', emberSimpleAuthConfig);
+      assert('ember-simple-auth.auth0 config must be defined', emberSimpleAuthConfig.auth0);
 
-    return emberSimpleAuthConfig.auth0;
+      return emberSimpleAuthConfig.auth0;
+    }
+  }),
+
+  /**
+   * The Auth0 App ClientID found in your Auth0 dashboard
+   * @type {String}
+   */
+  clientID: readOnly('config.clientID'),
+
+  /**
+   * The Auth0 App Domain found in your Auth0 dashboard
+   * @type {String}
+   */
+  domain: readOnly('config.domain'),
+
+  logoutURL: computed({
+    get() {
+      const loginURI = get(this, '_loginURI');
+      let location = `${window.location.protocol}//${window.location.host}`;
+
+      if (isPresent(loginURI)) {
+        location += `/${loginURI}`;
+      }
+
+      return location;
+    }
   }),
 
   getAuth0LockInstance(options) {
-    return new Auth0Lock(
-      get(this, 'clientID'),
-      get(this, 'domain'),
-      options
-    );
+    const {
+      domain,
+      clientID
+    } = getProperties(this, 'domain', 'clientID');
+
+    return new Auth0Lock(clientID, domain, options);
   },
 
   getAuth0Instance() {
-    return new Auth0({
-      domain: get(this, 'domain'),
-      clientID: get(this, 'clientID')
-    });
-  },
+    const {
+      domain,
+      clientID
+    } = getProperties(this, 'domain', 'clientID');
 
-  createSessionDataObject(profile, tokenInfo) {
-    return {
-      profile,
-      impersonated: profile.impersonated,
-      impersonator: profile.impersonator,
-      jwt: tokenInfo.idToken,
-      exp: tokenInfo.idTokenPayload.exp,
-      iat: tokenInfo.idTokenPayload.iat,
-      accessToken: tokenInfo.accessToken,
-      refreshToken: tokenInfo.refreshToken
-    };
+    return new Auth0({
+      domain,
+      clientID
+    });
   },
 
   navigateToLogoutURL() {
     const {
       domain,
-      redirectURL,
+      logoutURL,
       clientID
-    } = getProperties(this, 'domain', 'redirectURL', 'clientID');
+    } = getProperties(this, 'domain', 'logoutURL', 'clientID');
 
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${redirectURL}&client_id=${clientID}`);
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
     }
   },
 
@@ -81,48 +105,33 @@ export default Service.extend({
       return get(this, '_environmentConfig')['ember-simple-auth'];
     }
   }),
-  /**
-   * The Auth0 App ClientID found in your Auth0 dashboard
-   * @type {String}
-   */
-  clientID: readOnly('config.clientID'),
-
-  /**
-   * The Auth0 App Domain found in your Auth0 dashboard
-   * @type {String}
-   */
-  domain: readOnly('config.domain'),
-
-  redirectURL: computed({
-    get() {
-      let loginURI = get(this, '_loginURI');
-
-      return [
-        window.location.protocol,
-        '//',
-        window.location.host,
-        '/',
-        loginURI
-      ].join('');
-    }
-  }),
 
   _loginURI: computed({
     get() {
-      let redirectURI = get(this, '_redirectURI');
-      let loginURI = `${get(this, '_rootURL')}/${get(this, '_authenticationRoute')}`;
-      if (isPresent(redirectURI)) {
-        loginURI = redirectURI;
+      const {
+        _redirectURI,
+        _rootURL,
+        _authenticationRoute,
+      } = getProperties(this, '_redirectURI', '_rootURL', '_authenticationRoute');
+
+      let loginURI = _rootURL;
+
+      if (isPresent(_authenticationRoute)) {
+        loginURI += `/${_authenticationRoute}`;
       }
 
-      // Strip all leading / (slash) because we will add it back in during the redirectURL creation
+      if (isPresent(_redirectURI)) {
+        loginURI = _redirectURI;
+      }
+
+      // Strip all leading / (slash) because we will add it back in during the logoutURL creation
       return loginURI.replace(/(^[/\s]+)/g, '');
     }
   }),
   _redirectURI: readOnly('config.redirectURI'),
   _rootURL: computed({
     get() {
-      let rootURL = get(this, '_environmentConfig.rootURL');
+      const rootURL = get(this, '_environmentConfig.rootURL');
       if (isPresent(rootURL)) {
         return rootURL;
       }

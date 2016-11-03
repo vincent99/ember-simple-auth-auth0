@@ -1,20 +1,21 @@
 /*jshint node:true*/
+const RSVP = require('rsvp');
 
 module.exports = {
   description: '',
-
-  normalizeEntityName: function() {}, // no-op since we're just adding dependencies
-
+  normalizeEntityName() {
+  }, // no-op since we're just adding dependencies
   afterInstall() {
-    return this.addBowerPackagesToProject([
-      {
-        name: 'auth0-lock',
-        target: '^10.0.2'
-      },
-      {
-        name: 'auth0.js',
-        target: '^7.0.4'
-      }
+    return RSVP.all([
+      this.addPackageToProject('ember-simple-auth'),
+      this.addBowerPackagesToProject([
+        {
+          name: 'auth0-lock'
+        },
+        {
+          name: 'auth0.js'
+        }
+      ])
     ]);
   }
 };

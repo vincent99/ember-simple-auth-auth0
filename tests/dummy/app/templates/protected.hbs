@@ -1,2 +1,21 @@
-<h2>Example of protected route that requires the user to be authenticted.</h2>
+<h3>
+  You are currently logged as: {{session.data.authenticated.email}}
+  <img src="{{session.data.authenticated.userMetadata.profile_image}}" width="50" height="50">
+</h3>
+<h3>
+  {{#if session.data.authenticated.impersonated}}
+    Impersonated by: {{session.data.authenticated.impersonator.email}}
+  {{/if}}
+</h3>
+<div>
+  Token expires on {{moment-calendar (unix session.data.authenticated.idTokenPayload.exp)}} {{moment-from-now (unix session.data.authenticated.idTokenPayload.exp)}}
+</div>
+<a href="#" {{action "logout"}}>
+  {{#if session.data.authenticated.impersonated}}
+    Stop Impersonating
+  {{else}}
+    Logout
+  {{/if}}
+</a>
+<h2>Example of protected route that requires the user to be authenticated.</h2>
 <h3>Secret code is 12345</h3>
