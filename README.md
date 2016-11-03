@@ -154,7 +154,8 @@ import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
 
 const {
-  Route
+  Route,
+  RSVP
 } = Ember;
 
 export default Route.extend(ApplicationRouteMixin, {
@@ -185,15 +186,14 @@ const {
 
 export default Controller.extend({
   session: service(),
- actions: {
+  actions: {
     login () {
       // Check out the docs for all the options:
       // https://auth0.com/docs/libraries/lock/customization
       const lockOptions = {
-       autoclose: true,
        auth: {
          params: {
-           scope: 'openid'
+           scope: 'openid user_metadata'
          }
        }
       };
@@ -212,11 +212,12 @@ export default Controller.extend({
 // app/templates/application.hbs
 
 {{#if session.isAuthenticated}}
-  You are currently logged as: {{session.data.authenticated.email}}
-
-  <a {{ action "logout" }}>Logout</a>
+  <div>
+    You are currently logged as: {{session.data.authenticated.email}}
+  </div>
+  <a href="" {{ action "logout" }}>Logout</a>
 {{else}}
-  <a {{ action "login" }}>Login</a>
+  <a href="" {{ action "login" }}>Login</a>
 {{/if}}
 ```
 
