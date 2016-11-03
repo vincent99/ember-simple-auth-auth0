@@ -1,23 +1,32 @@
-/* jshint node: true */
-'use strict';
-const execSync = require('child_process').execSync;
+/* jshint node:true */
+const generateChangelog = require('ember-cli-changelog/lib/tasks/release-with-changelog');
+const { exec } = require('child_process');
 
+// For details on each option run `ember help release`
 module.exports = {
   message: ':tada: %@',
   publish: true,
   init(project, tags) {
-    execSync(`git hf release start ${tags.next}`, (err) => {
-      if (err) {
-        throw new Error('Could not complete starting a hubflow release');
-      }
-    });
+    return execPromisified(`git hf release start ${tags.next}`);
   },
 
   afterPush(project, tags) {
-    execSync(`git hf release finish ${tags.next}`, (err) => {
-      if (err) {
-        throw new Error('Could not complete finishing a hubflow release');
-      }
-    });
+    return execPromisified(`git hf release finish ${tags.next}`);
   },
+
+  beforeCommit() {
+    return generateChangelog(...arguments);
+  }
 };
+
+function execPromisified(command) {
+  return new Promise((resolve, reject) => {
+    exec(command, (err) => {
+      if (err) {
+        return reject(new Error(`Could not complete '${command}' -- ${err}`));
+      }
+
+      resolve();
+    });
+  });
+}
