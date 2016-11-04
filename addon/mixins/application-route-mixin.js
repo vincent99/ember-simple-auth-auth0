@@ -10,11 +10,14 @@ const {
   get,
   getWithDefault,
   set,
-  RSVP,
+  RSVP: {
+    resolve
+  },
   inject: {
     service
   },
-  run
+  run,
+  testing
 } = Ember;
 
 export default Mixin.create(ApplicationRouteMixin, {
@@ -38,7 +41,7 @@ export default Mixin.create(ApplicationRouteMixin, {
    * @return {Promise}
    */
   beforeSessionExpired() {
-    return RSVP.resolve();
+    return resolve();
   },
 
   /**
@@ -52,13 +55,17 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   beforeModel() {
     this._setupFutureEvents();
-    let promise = RSVP.resolve(this._super(...arguments));
+    let promise = resolve(this._super(...arguments));
 
     if (get(this, 'hasImpersonationData')) {
       promise = promise.then(() => this._authenticateAsImpersonator());
     }
 
     return promise;
+  },
+
+  willDestroy() {
+    this._clearJobs();
   },
 
   hasImpersonationData: notEmpty('_impersonationData'),
@@ -76,6 +83,11 @@ export default Mixin.create(ApplicationRouteMixin, {
   }),
 
   _setupFutureEvents() {
+    // Don't schedule expired events during testing, otherwise acceptance tests will hang.
+    if (testing) {
+      return;
+    }
+
     this._scheduleExpire();
   },
 
@@ -113,12 +125,13 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _processSessionExpired() {
-    this.beforeSessionExpired().then(() => {
-      let session = get(this, 'session');
+    this.beforeSessionExpired()
+      .then(() => {
+        let session = get(this, 'session');
 
-      if (get(session, 'isAuthenticated')) {
-        session.invalidate();
-      }
-    });
+        if (get(session, 'isAuthenticated')) {
+          session.invalidate();
+        }
+      });
   },
 });

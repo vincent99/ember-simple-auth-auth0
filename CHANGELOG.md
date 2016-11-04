@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## v1.0.3 (November 4th, 2016)
+
+- [#10](https://github.com/seawatts/ember-simple-auth-auth0/pull/10) **fix:** Only run beforeSessionExpire if we are not in testing *by [@seawatts](https://github.com/seawatts)*
+
 ## v1.0.2 (November 3rd, 2016)
 
 - [#9](https://github.com/seawatts/ember-simple-auth-auth0/pull/9) **fix:** issue where jwt authorizer wasn't adding the jwt to the block *by [@seawatts](https://github.com/seawatts)*
