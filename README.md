@@ -43,13 +43,14 @@ The logoutURL that is actually gets used is constructed as follows:
 // config/environment.js
 module.exports = function(environment) {
   let ENV = {
-    ['ember-simple-auth']: {
+    'ember-simple-auth': {
       authenticationRoute: 'login', 
       auth0: {
         clientID: '1234',
         domain: 'my-company.auth0.com',
         logoutURL: '/logout',
-    },
+      }
+    }
   };
   
   return ENV;
@@ -83,33 +84,42 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 {
   "authenticated": {
     "authenticator": "authenticator:auth0-lock",
-    "email": "foo@bar.com",
-    "appMetadata": {
+    "profile": {
+      "email": "bob@simplymeasured.com",
+      "app_metadata": {
+        "is_sm_admin": true,
+        "api_access": true,
+        "sm3_eligible": true
+      },
+      "user_metadata": {
+        "profile_image": "https://s.gravatar.com/avatar/aaafe9b3923266eacb178826a65e92d1?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatar2%2Fcw.png",
+        "email": "bob@domain.com",
+        "first_name": "bob",
+        "last_name": "johnson"
+      },
+      "email_verified": true,
+      "clientID": "Yw2Y9D433veMHCred7j0BESjlnwF7ry8",
+      "updated_at": "2016-11-15T00:49:16.663Z",
+      "user_id": "auth0|0ca04c34-2247-40f9-b918-292a4bab8995",
+      "identities": [
+        {
+          "user_id": "0bc04c32-2247-40f9-b918-292a4bab8995",
+          "provider": "auth0",
+          "connection": "social",
+          "isSocial": false
+        }
+      ],
+      "created_at": "2016-03-29T18:47:22.112Z",
+      "global_client_id": "IW1j1MbdaRIz0pOwPdN2Ciuh2uIdzfyQ"
     },
-    "userMetadata": {
-    },
-    "emailVerified": true,
-    "clientID": "YwDY9D433veMHC2e27j2BESjlnwF7ry8",
-    "updatedAt": "2016-11-02T23:28:06.864Z",
-    "userId": "auth0|da71a38d-3d2a-4281-8dfa-504ed0acd598",
-    "identities": [
-      {
-        "user_id": "da71a38d-3de2-4281-8dfa-504ed0acd598",
-        "provider": "auth0",
-        "connection": "DB",
-        "isSocial": false
-      }
-    ],
-    "createdAt": "2016-04-01T21:03:24.847Z",
-    "globalClientId": "I22jtMbdaRIz0pOwPdN2Ciuh2uIdzfy2",
-    "accessToken": "OfevAkQ5ar42HA2j",
-    "idToken": "aaaa.bbb.cccc",
+    "accessToken": "BS72xWcch5x2KZQu",
+    "idToken": "eyJ0eXAiOiJKV1Q1LCJhbGciOiJIUzI1NiJ9.1yJpc3MiOiJodHRwczovL3NpbXBseW1lYXN1cmVkLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHwwYmEwNGMzNC0yMjQ3LTQwZjktYjkxOC0yOTJhNGJhYjg5OTUiLCJhdWQiOiJZd0RZOUQ0MzN2ZU1IQ3JlZDdqMEJFU2psbndGN3J5OCIsImV4cCI6MTQ3OTY3MDk1NywiaWF0IjoxNDc5MTcwOTU3fQ.JFHqL1GElPgY86ujjECXX3TOYjiTiIn-tXB1AV0-j2s",
     "idTokenPayload": {
       "iss": "https://domain.auth0.com/",
-      "sub": "auth0|da71a382-3dea-2281-8dfa-204ed0acd598",
-      "aud": "Yw2Y9D433veMHCred7j0BESjlnwF7r28",
-      "exp": 1478629287,
-      "iat": 1478129287
+      "sub": "auth0|0ba01134-2247-40f9-b918-292a4bab8995",
+      "aud": "YwDY9D431v1MHCred7j0BESjlnwF7ry8",
+      "exp": 1479670957,
+      "iat": 1479170957
     }
   }
 }
@@ -118,7 +128,7 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 __You can use this in your templates that have the session service injected.__
 
 ```html 
-My logged in user email is {{session.data.authenticated.email}}!
+My logged in user email is {{session.data.authenticated.profile.email}}!
 ```
 
 ## Impersonation
@@ -134,10 +144,12 @@ __The new session object will include the following fields__
   "authenticated": {
     "authenticator": "authenticator:auth0-impersonation",
     ...
-    "impersonated": true,
-    "impersonator": {
-      "user_id": "google-oauth2|108251222085688410292",
-      "email": "impersonator@bar.com"
+    "profile": {
+      "impersonated": true,
+      "impersonator": {
+        "user_id": "google-oauth2|108251222085688410292",
+        "email": "impersonator@bar.com"
+      }
     }
     ...
   }
@@ -213,7 +225,7 @@ export default Controller.extend({
 
 {{#if session.isAuthenticated}}
   <div>
-    You are currently logged as: {{session.data.authenticated.email}}
+    You are currently logged as: {{session.data.authenticated.profile.email}}
   </div>
   <a href="" {{ action "logout" }}>Logout</a>
 {{else}}

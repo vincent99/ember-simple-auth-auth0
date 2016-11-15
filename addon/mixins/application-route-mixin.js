@@ -68,13 +68,11 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._clearJobs();
   },
 
-  hasImpersonationData: notEmpty('_impersonationData'),
+  hasImpersonationData: notEmpty('_impersonationData.idToken'),
 
   _authenticateAsImpersonator() {
     const impersonationData = get(this, '_impersonationData');
-    if (impersonationData && impersonationData.idToken) {
-      return get(this, 'session').authenticate('authenticator:auth0-impersonation', impersonationData);
-    }
+    return get(this, 'session').authenticate('authenticator:auth0-impersonation', impersonationData);
   },
 
   _impersonationData: computed(function() {
