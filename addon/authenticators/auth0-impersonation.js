@@ -22,7 +22,7 @@ export default BaseAuthenticator.extend({
 
       const auth0 = get(this, 'auth0').getAuth0Instance();
 
-      auth0.getProfile(impersonationData.idToken, (err, profile) => {
+      auth0.getUserInfo(impersonationData.accessToken, (err, profile) => {
         if (err) {
           return reject(err);
         }

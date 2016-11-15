@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v2.0.0 (November 14th, 2016)
+
+**Breaking Changes**
+
+ - The profile that is returned from lock.js getProfile is now scoped under the profile property on the session. See readme for updated session object
+
 ## v1.0.3 (November 4th, 2016)
 
 - [#10](https://github.com/seawatts/ember-simple-auth-auth0/pull/10) **fix:** Only run beforeSessionExpire if we are not in testing *by [@seawatts](https://github.com/seawatts)*
