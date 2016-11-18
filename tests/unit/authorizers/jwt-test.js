@@ -12,7 +12,7 @@ module('Unit | Authorizer | jwt', {
   }
 });
 
-test('it adds the Authorization Bearer token to the block', function(assert) {
+test('it adds the Authorization Bearer token to the block if we are using idToken key', function(assert) {
   let block = this.spy();
   let sessionData = {
     idToken: 'aaa.bbb.ccc'
@@ -23,4 +23,17 @@ test('it adds the Authorization Bearer token to the block', function(assert) {
   authorizer.authorize(sessionData, block);
 
   assert.ok(block.calledWith('Authorization', `Bearer ${sessionData.idToken}`));
+});
+
+test('it adds the Authorization Bearer token to the block if we are using jwt key', function(assert) {
+  let block = this.spy();
+  let sessionData = {
+    jwt: 'aaa.bbb.ccc'
+  };
+
+  let authorizer = this.subject();
+
+  authorizer.authorize(sessionData, block);
+
+  assert.ok(block.calledWith('Authorization', `Bearer ${sessionData.jwt}`));
 });

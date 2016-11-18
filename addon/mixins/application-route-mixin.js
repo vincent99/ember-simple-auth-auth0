@@ -8,7 +8,6 @@ const {
     notEmpty
   },
   get,
-  getWithDefault,
   set,
   RSVP: {
     resolve
@@ -17,7 +16,9 @@ const {
     service
   },
   run,
-  testing
+  testing,
+  deprecate,
+  isEmpty,
 } = Ember;
 
 export default Mixin.create(ApplicationRouteMixin, {
@@ -100,9 +101,29 @@ export default Mixin.create(ApplicationRouteMixin, {
    * The current JWT's expire time
    * @return {Number in seconds}
    */
-  _expiresAt: computed('session.data.authenticated.idTokenPayload.exp', {
+  _expiresAt: computed('session.data.authenticated', {
     get() {
-      return getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', 0);
+
+      const authenticatedData = get(this, 'session.data.authenticated');
+      const idTokenPayload = get(authenticatedData, 'idTokenPayload');
+
+      let exp = 0;
+
+      if (isEmpty(idTokenPayload)) {
+        exp = get(authenticatedData, 'exp');
+
+        deprecate(
+          'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
+          false,
+          {
+            id: 'ember-simple-auth-auth0.application-route-mixin._expiresAt',
+            until: 'v3.0.0',
+          });
+      } else {
+        exp = get(idTokenPayload, 'exp');
+      }
+
+      return exp;
     }
   }),
 

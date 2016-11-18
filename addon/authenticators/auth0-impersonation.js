@@ -5,10 +5,13 @@ import createSessionDataObject from '../utils/create-session-data-object';
 const {
   RSVP,
   get,
+  getProperties,
   inject: {
     service
   },
-  isEmpty
+  isEmpty,
+  deprecate,
+  isPresent,
 } = Ember;
 
 export default BaseAuthenticator.extend({
@@ -33,6 +36,26 @@ export default BaseAuthenticator.extend({
   },
 
   restore(data) {
+    const {
+      jwt,
+      exp,
+    } = getProperties(data, 'jwt', 'exp');
+
+    deprecate(
+      'Should use "idToken" as the key for the authorization token instead of "jwt" key on the session data',
+      isPresent(jwt), {
+        id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
+        until: 'v3.0.0',
+      });
+
+
+    deprecate(
+      'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
+      isPresent(exp), {
+        id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
+        until: 'v3.0.0',
+      });
+
     return RSVP.resolve(data);
   }
 });
