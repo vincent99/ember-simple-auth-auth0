@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## v2.1.0 (November 18th, 2016)
+
+- [#15](https://github.com/seawatts/ember-simple-auth-auth0/pull/15) **enhancement:** backwards compatibility for data.authenticated block *by [@seawatts](https://github.com/seawatts)*
+
 ## v2.0.0 (November 14th, 2016)
 
 **Breaking Changes**
