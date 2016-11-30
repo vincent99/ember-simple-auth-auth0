@@ -1,6 +1,10 @@
 Changelog
 =========
 
+## v2.1.2 (November 30th, 2016)
+
+- [#17](https://github.com/seawatts/ember-simple-auth-auth0/pull/17) **fix:** Remove string interpolation *by [@seawatts](https://github.com/seawatts)*
+
 ## v2.1.1 (November 30th, 2016)
 
 - [#16](https://github.com/seawatts/ember-simple-auth-auth0/pull/16) **fix:** Don't use es6 feature in index.js *by [@seawatts](https://github.com/seawatts)*
