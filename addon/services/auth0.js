@@ -1,4 +1,4 @@
-/* globals Auth0Lock, Auth0 */
+/* globals Auth0Lock, Auth0LockPasswordless, Auth0 */
 import Ember from 'ember';
 import getOwner from 'ember-getowner-polyfill';
 
@@ -68,6 +68,15 @@ export default Service.extend({
     } = getProperties(this, 'domain', 'clientID');
 
     return new Auth0Lock(clientID, domain, options);
+  },
+
+  getAuth0LockPasswordlessInstance() {
+     const {
+      domain,
+      clientID
+    } = getProperties(this, 'domain', 'clientID');
+
+    return new Auth0LockPasswordless(clientID, domain);
   },
 
   getAuth0Instance() {
