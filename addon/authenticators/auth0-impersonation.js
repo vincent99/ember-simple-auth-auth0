@@ -11,7 +11,6 @@ const {
   },
   isEmpty,
   deprecate,
-  isPresent,
 } = Ember;
 
 export default BaseAuthenticator.extend({
@@ -43,7 +42,7 @@ export default BaseAuthenticator.extend({
 
     deprecate(
       'Should use "idToken" as the key for the authorization token instead of "jwt" key on the session data',
-      isPresent(jwt), {
+      isEmpty(jwt), {
         id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
         until: 'v3.0.0',
       });
@@ -51,7 +50,7 @@ export default BaseAuthenticator.extend({
 
     deprecate(
       'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
-      isPresent(exp), {
+      isEmpty(exp), {
         id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
         until: 'v3.0.0',
       });
