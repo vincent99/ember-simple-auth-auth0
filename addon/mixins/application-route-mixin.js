@@ -103,11 +103,14 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   _expiresAt: computed('session.data.authenticated', {
     get() {
+      let exp = 0;
+
+      if (!get(this, 'session.isAuthenticated')) {
+        return exp;
+      }
 
       const authenticatedData = get(this, 'session.data.authenticated');
       const idTokenPayload = get(authenticatedData, 'idTokenPayload');
-
-      let exp = 0;
 
       if (isEmpty(idTokenPayload)) {
         exp = get(authenticatedData, 'exp');
