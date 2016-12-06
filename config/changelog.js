@@ -8,7 +8,7 @@ module.exports = {
   // jquery style guide: https://contribute.jquery.org/commits-and-pull-requests/#commit-guidelines
   style: 'angular', // 'angular' 'jquery'
 
-  head: 'master',
+  head: 'develop',
   base: '-last', // a branch or tag name, `-last` defaults to the version in package.json
 
   hooks: {
