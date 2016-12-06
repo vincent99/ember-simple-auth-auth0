@@ -72,7 +72,9 @@ test('it does not set the exp time if the user is not authenticated', function(a
       isAuthenticated: false,
       data: {
         authenticated: {
-          exp: 10,
+          idTokenPayload: {
+            exp: 10,
+          },
         },
       },
     },
