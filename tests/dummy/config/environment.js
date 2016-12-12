@@ -47,9 +47,13 @@ module.exports = function(environment) {
     authenticationRoute: 'login',
     routeAfterAuthentication: 'protected',
     routeIfAlreadyAuthenticated: 'protected',
+    // auth0: {
+    //   clientID: process.env.AUTH0_CLIENT_ID,
+    //   domain: process.env.AUTH0_DOMAIN
+    // }
     auth0: {
-      clientID: process.env.AUTH0_CLIENT_ID,
-      domain: process.env.AUTH0_DOMAIN
+      clientID: 'Gcs1jSu5FAFpDrPe0jrqGpfbTEkzCk15',
+      domain: 'pwdlessdemo.auth0.com'
     }
   };
 

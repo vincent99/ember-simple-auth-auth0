@@ -3,7 +3,7 @@ import Ember from 'ember';
 const {
   Controller,
   inject,
-  get
+  get,
 } = Ember;
 
 export default Controller.extend({
@@ -12,5 +12,12 @@ export default Controller.extend({
     login() {
       get(this, 'session').authenticate('authenticator:auth0-lock');
     },
+    loginPasswordless(type) {
+      const lockOptions = {
+        callbackURL: 'https://localhost:4200/passwordless'
+      };
+
+      get(this, 'session').authenticate('authenticator:auth0-passwordless', type, lockOptions);
+    }
   }
 });
