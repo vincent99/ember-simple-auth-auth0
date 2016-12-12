@@ -238,6 +238,7 @@ export default Controller.extend({
 ## Cloning
 
 * `git clone` this repository
+* `cd ember-simple-auth-auth0`
 * `npm install`
 * `bower install`
 
@@ -251,7 +252,7 @@ export default Controller.extend({
 
 ## Running Tests
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
+* `npm test` (Runs `ember try:each` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
@@ -259,4 +260,4 @@ export default Controller.extend({
 
 * `ember build`
 
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
