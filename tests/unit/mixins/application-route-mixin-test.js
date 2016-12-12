@@ -33,6 +33,7 @@ test('it sets the correct expiration time if the exp is on idTokenPayload block'
   assert.expect(1);
   const subject = this.subject({
     session: {
+      isAuthenticated: true,
       data: {
         authenticated: {
           idTokenPayload: {
@@ -44,13 +45,14 @@ test('it sets the correct expiration time if the exp is on idTokenPayload block'
     hasImpersonationData: true,
   });
 
-  assert.ok(get(subject, '_expiresAt'), 10);
+  assert.equal(get(subject, '_expiresAt'), 10);
 });
 
 test('it sets the correct expiration time if the exp is on the authenticated block', function(assert) {
   assert.expect(1);
   const subject = this.subject({
     session: {
+      isAuthenticated: true,
       data: {
         authenticated: {
           exp: 10,
@@ -60,7 +62,26 @@ test('it sets the correct expiration time if the exp is on the authenticated blo
     hasImpersonationData: true,
   });
 
-  assert.ok(get(subject, '_expiresAt'), 10);
+  assert.equal(get(subject, '_expiresAt'), 10);
+});
+
+test('it does not set the exp time if the user is not authenticated', function(assert) {
+  assert.expect(1);
+  const subject = this.subject({
+    session: {
+      isAuthenticated: false,
+      data: {
+        authenticated: {
+          idTokenPayload: {
+            exp: 10,
+          },
+        },
+      },
+    },
+    hasImpersonationData: true,
+  });
+
+  assert.equal(get(subject, '_expiresAt'), 0);
 });
 
 test('it calls the auth0-impersonation authenticator if we have impersonation data', function(assert) {

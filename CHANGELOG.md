@@ -1,6 +1,16 @@
 Changelog
 =========
 
+## v2.1.4 (December 5th, 2016)
+
+### Pull Requests
+
+- [#20](https://github.com/seawatts/ember-simple-auth-auth0/pull/20) **fix**: issue where the session would not be invalided when the token is expired  *by [Chris Watts](https://github.com/seawatts/feature)*
+
+## v2.1.3 (December 5th, 2016)
+
+- [#19](https://github.com/seawatts/ember-simple-auth-auth0/pull/19) **fix:** deprecation warnings to display correctly *by [@seawatts](https://github.com/seawatts)*
+
 ## v2.1.2 (November 30th, 2016)
 
 - [#17](https://github.com/seawatts/ember-simple-auth-auth0/pull/17) **fix:** Remove string interpolation *by [@seawatts](https://github.com/seawatts)*

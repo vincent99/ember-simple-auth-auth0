@@ -8,6 +8,7 @@ const {
     notEmpty
   },
   get,
+  getWithDefault,
   set,
   RSVP: {
     resolve
@@ -18,7 +19,7 @@ const {
   run,
   testing,
   deprecate,
-  isEmpty,
+  isPresent,
 } = Ember;
 
 export default Mixin.create(ApplicationRouteMixin, {
@@ -103,14 +104,17 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   _expiresAt: computed('session.data.authenticated', {
     get() {
-
-      const authenticatedData = get(this, 'session.data.authenticated');
-      const idTokenPayload = get(authenticatedData, 'idTokenPayload');
-
       let exp = 0;
 
-      if (isEmpty(idTokenPayload)) {
-        exp = get(authenticatedData, 'exp');
+      if (!get(this, 'session.isAuthenticated')) {
+        return exp;
+      }
+
+      const deprecatedExp = getWithDefault(this, 'session.data.authenticated.exp', null);
+      const newExp = getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', null);
+
+      if (isPresent(deprecatedExp)) {
+        exp = deprecatedExp;
 
         deprecate(
           'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
@@ -120,7 +124,7 @@ export default Mixin.create(ApplicationRouteMixin, {
             until: 'v3.0.0',
           });
       } else {
-        exp = get(idTokenPayload, 'exp');
+        exp = newExp;
       }
 
       return exp;

@@ -5,4 +5,5 @@ const {
   Route
 } = Ember;
 
-export default Route.extend(AuthenticatedRouteMixin);
+export default Route.extend(AuthenticatedRouteMixin, {
+});
