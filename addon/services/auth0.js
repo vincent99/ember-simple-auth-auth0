@@ -76,7 +76,6 @@ export default Service.extend({
       clientID
     } = getProperties(this, 'domain', 'clientID');
 
-     debugger;
     return new Auth0LockPasswordless(clientID, domain);
   },
 
