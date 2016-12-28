@@ -256,20 +256,6 @@ test('visiting /login redirects to /protected page if authenticated', function(a
     idToken: 1
   };
 
-  mockAuth0Lock(this.application, sessionData);
-  visit('/login');
-  
-  andThen(() => {
-    assert.equal(currentURL(), '/protected');
-  });
-});
-
-test('it mocks the auth0 lock login and logs in the user', function(assert) {
-  assert.expect(1);
-  const sessionData = {
-    idToken: 1
-  };
-
   authenticateSession(this.application, sessionData);
   visit('/login');
   andThen(() => {
@@ -278,6 +264,20 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
     assert.equal(idToken, sessionData.idToken);
     assert.equal(currentURL(), '/protected');
   }); 
+});
+
+test('it mocks the auth0 lock login and logs in the user', function(assert) {
+  assert.expect(1);
+  const sessionData = {
+    idToken: 1
+  };
+
+  mockAuth0Lock(this.application, sessionData);
+  visit('/login');
+  
+  andThen(() => {
+    assert.equal(currentURL(), '/protected');
+  });
 });
 ```
 
