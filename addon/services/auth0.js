@@ -18,7 +18,6 @@ const {
   inject: {
     service
   },
-  testing,
   RSVP,
 } = Ember;
 
@@ -82,6 +81,7 @@ export default Service.extend({
 
     return new RSVP.Promise((resolve, reject) => {
       let lock = this.getAuth0LockInstance(options, clientID, domain);
+      lock.on('unrecoverable_error', reject);
       lock.on('authorization_error', reject);
       lock.on('authenticated', (authenticatedData) => {
         lock.getProfile(authenticatedData.idToken, (error, profile) => {
