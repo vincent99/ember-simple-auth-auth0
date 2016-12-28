@@ -1,11 +1,11 @@
 import Ember from 'ember';
 import ApplicationRouteMixinMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
-import getOwner from 'ember-getowner-polyfill';
 import { moduleFor } from 'ember-qunit';
 import test from 'ember-sinon-qunit/test-support/test';
 
 const {
   get,
+  getOwner,
   run,
   RSVP,
   Object: EmberObject
