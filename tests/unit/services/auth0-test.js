@@ -1,89 +1,231 @@
 import Ember from 'ember';
+import test from 'ember-sinon-qunit/test-support/test';
+import sinon from 'sinon';
+import createSessionDataObject from 'ember-simple-auth-auth0/utils/create-session-data-object';
+
 import {
   moduleFor,
-  test
 } from 'ember-qunit';
 
 const {
-  get
+  get,
+  set,
+  Evented,
 } = Ember;
+
+const assign = Ember.assign || Ember.merge;
+
+const StubLock = Ember.Object.extend(Evented, {
+  profile: null,
+  shouldThrowGetProfileError: false,
+  getProfile(idToken, callback) {
+    // TODO: figure out when to call error in here
+    if (get(this, 'shouldThrowGetProfileError')) {
+      callback(new Error('failed to get profile'));
+    } else {
+      callback(null, get(this, 'profile'));
+    }
+  },
+  show: sinon.stub(),
+});
 
 moduleFor('service:auth0', 'Unit | Service | auth0', {
   // Specify the other units that are required for this test.
   // needs: ['service:foo']
+  registerConfig(config) {
+    const defaultConfig = {
+      rootURL: '/test',
+      ['ember-simple-auth']: {
+        authenticationRoute: 'login',
+        auth0: {}
+      }
+    };
+
+    config = assign(defaultConfig, config);
+    this.register('config:environment', config);
+    return config;
+  },
+  stubLock(stubbedLock) {
+    stubbedLock = stubbedLock || new StubLock();
+    return this.stub().returns(stubbedLock);
+  },
+  windowLocation() {
+    return [
+      window.location.protocol,
+      '//',
+      window.location.host,
+    ].join('');
+  }
 });
 
-function windowLocation() {
-  return [
-    window.location.protocol,
-    '//',
-    window.location.host,
-  ].join('');
-}
-
 test('it calculates the logoutURL correctly with rootURL', function(assert) {
-  const config = {
-    rootURL: '/test',
-    ['ember-simple-auth']: {
-      authenticationRoute: 'login',
-      auth0: {}
-    }
-  };
-
-  this.register('config:environment', config);
+  const config = this.registerConfig();
 
   let service = this.subject();
   assert.equal(get(service, 'logoutURL'),
-    `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
+    `${this.windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
 test('it calculates the logoutURL correctly with baseURL', function(assert) {
-  const config = {
-    baseURL: '/test',
-    ['ember-simple-auth']: {
-      authenticationRoute: 'login',
-      auth0: {}
-    }
-  };
-
-  this.register('config:environment', config);
+  const config = this.registerConfig({
+    rootURL: null,
+    baseURL: '/test'
+  });
 
   let service = this.subject();
   assert.equal(get(service, 'logoutURL'),
-    `${windowLocation()}${config.baseURL}/${config['ember-simple-auth'].authenticationRoute}`);
+    `${this.windowLocation()}${config.baseURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
 test('it calculates the logoutURL correctly giving rootURL precedence', function(assert) {
-  const config = {
-    baseURL: '/test',
+  const config = this.registerConfig({
     rootURL: '/testroot',
-    ['ember-simple-auth']: {
-      authenticationRoute: 'login',
-      auth0: {}
-    }
-  };
-
-  this.register('config:environment', config);
+    baseURL: '/test'
+  });
 
   let service = this.subject();
   assert.equal(get(service, 'logoutURL'),
-    `${windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
+    `${this.windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
 });
 
 test('it calculates the logoutURL correctly giving redirectURI precedence', function(assert) {
-  const config = {
-    rootURL: '/test',
+  const config = this.registerConfig({
     ['ember-simple-auth']: {
       authenticationRoute: 'login',
       auth0: {
         redirectURI: 'my-login'
       }
     }
-  };
-
-  this.register('config:environment', config);
+  });
 
   let service = this.subject();
   assert.equal(get(service, 'logoutURL'),
-    `${windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
+    `${this.windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
+});
+
+test('showPasswordlessLock throws an error when the wrong type is passed in', function(assert) {
+  assert.expect(1);
+  this.registerConfig();
+  const subject = this.subject();
+  assert.throws(() => subject.showPasswordlessLock());
+});
+
+test('showPasswordlessLock assigns options', function(assert) {
+  assert.expect(1);
+  assert.expect(1);
+  this.registerConfig();
+  const subject = this.subject({
+    getAuth0PasswordlessInstance: this.stubLock()
+  });
+
+  const options = {
+    auth: {
+      params: {
+        scope: 'openid user_id'
+      },
+    },
+  };
+
+  subject.showPasswordlessLock('sms', options);
+
+  assert.ok(subject.getAuth0PasswordlessInstance.calledWith(options));
+});
+
+// test('you can pass in clientid and domain', function(assert) {
+//   assert.expect(1);
+//   const subject = this.subject();
+//
+// });
+
+test('showLock calls getProfile', function(assert) {
+  assert.expect(1);
+  const done = assert.async();
+  const stubbedLock = new StubLock();
+  const profile = {
+    user_id: '1',
+  };
+  const authenticatedData = {
+    idToken: '1.2.3',
+  };
+
+  const expectedData = createSessionDataObject(profile, authenticatedData);
+
+  set(stubbedLock, 'profile', profile);
+  const subject = this.subject({
+    getAuth0LockInstance: this.stubLock(stubbedLock)
+  });
+
+  subject.showLock()
+    .then((data) => assert.deepEqual(data, expectedData))
+    .catch(() => assert.notOk(true))
+    .finally(done);
+
+  stubbedLock.trigger('authenticated', authenticatedData);
+});
+
+test('showLock rejects when receiving an unrecoverable_error', function(assert) {
+  assert.expect(1);
+  const done = assert.async();
+  const stubbedLock = new StubLock();
+  const subject = this.subject({
+    getAuth0LockInstance: this.stubLock(stubbedLock)
+  });
+
+  subject.showLock()
+    .then(() => assert.notOk(true))
+    .catch(() => assert.ok(true))
+    .finally(done);
+
+  stubbedLock.trigger('unrecoverable_error', new Error());
+});
+
+test('showLock rejects when receiving an authorization_error', function(assert) {
+  assert.expect(1);
+  const done = assert.async();
+  const stubbedLock = new StubLock();
+  const subject = this.subject({
+    getAuth0LockInstance: this.stubLock(stubbedLock)
+  });
+
+  subject.showLock()
+    .then(() => assert.notOk(true))
+    .catch(() => assert.ok(true))
+    .finally(done);
+
+  stubbedLock.trigger('authorization_error', new Error());
+});
+
+test('showLock rejects when authenticatedData does not exist', function(assert) {
+  assert.expect(1);
+  const done = assert.async();
+  const stubbedLock = new StubLock();
+  const subject = this.subject({
+    getAuth0LockInstance: this.stubLock(stubbedLock)
+  });
+
+  subject.showLock()
+    .then(() => assert.notOk(true))
+    .catch(() => assert.ok(true))
+    .finally(done);
+
+  stubbedLock.trigger('authenticated');
+});
+
+test('showLock rejects when getProfile returns an error', function(assert) {
+  assert.expect(1);
+  const done = assert.async();
+  const stubbedLock = new StubLock({
+    shouldThrowGetProfileError: true
+  });
+
+  const subject = this.subject({
+    getAuth0LockInstance: this.stubLock(stubbedLock)
+  });
+
+  subject.showLock()
+    .then(() => assert.notOk(true))
+    .catch(() => assert.ok(true))
+    .finally(done);
+
+  stubbedLock.trigger('authenticated', { idToken: '1.2.3' });
 });

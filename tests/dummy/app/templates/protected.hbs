@@ -1,6 +1,6 @@
 <h3>
-  You are currently logged as: {{session.data.authenticated.email}}
-  <img src="{{session.data.authenticated.profile.user_metadata.profile_image}}" width="50" height="50">
+  You are currently logged as: {{session.data.authenticated.profile.email}}
+  <img src="{{session.data.authenticated.profile.picture}}" width="50" height="50">
 </h3>
 <h3>
   {{#if session.data.authenticated.profile.impersonated}}

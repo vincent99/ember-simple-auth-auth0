@@ -7,11 +7,18 @@ module.exports = {
     this._super.included(app);
 
     app.import(app.bowerDirectory + '/auth0-lock/build/lock.js');
+    app.import(app.bowerDirectory + '/auth0-lock-passwordless/build/lock-passwordless.js');
     app.import(app.bowerDirectory + '/auth0.js/build/auth0.js');
 
     app.import('vendor/lock.js', {
       exports: {
         'auth0-lock': ['default']
+      }
+    });
+
+    app.import('vendor/lock-passwordless.js', {
+      exports: {
+        'auth0-lock-passwordless': ['default']
       }
     });
 

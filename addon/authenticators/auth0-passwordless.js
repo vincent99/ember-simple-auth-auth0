@@ -6,12 +6,14 @@ const {
   inject: {
     service
   },
+  RSVP,
 } = Ember;
 
 
 export default Auth0BaseAuthenticator.extend({
   auth0: service(),
-  authenticate(type, options) {
-    return get(this, 'auth0').showPasswordlessLock(type, options);
+  authenticate(type, options, callback) {
+    get(this, 'auth0').showPasswordlessLock(type, options).then(callback);
+    return RSVP.reject();
   },
 });

@@ -14,10 +14,12 @@ export default Controller.extend({
     },
     loginPasswordless(type) {
       const lockOptions = {
-        callbackURL: 'https://localhost:4200/passwordless'
+        autoclose: true,
       };
 
-      get(this, 'session').authenticate('authenticator:auth0-passwordless', type, lockOptions);
+      get(this, 'session').authenticate('authenticator:auth0-passwordless', type, lockOptions, () => {
+        console.log('Passwordless thing sent');
+      });
     }
   }
 });

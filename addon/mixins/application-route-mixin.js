@@ -79,7 +79,7 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _impersonationData: computed(function() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
-    return auth0.parseHash(window.location.hash);
+    return auth0.parseHash();
   }),
 
   _setupFutureEvents() {

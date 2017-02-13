@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
+import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
 
 const {
@@ -15,6 +16,7 @@ const {
   assert,
   testing,
   isPresent,
+  isEmpty,
   inject: {
     service
   },
@@ -88,6 +90,7 @@ export default Service.extend({
     return new RSVP.Promise((resolve, reject) => {
       const lock = this.getAuth0LockInstance(options, clientID, domain);
       this._setupLock(lock, resolve, reject);
+      lock.show();
     });
   },
 
@@ -105,12 +108,15 @@ export default Service.extend({
 
     options = assign(defaultOptions, options);
 
-    assert('You must pass in a valid callbackURL in the options block to auth0-passwordless authenticator.',
-      options.callbackURL);
-
     return new RSVP.Promise((resolve, reject) => {
-      const lock = this.getAuth0LockPasswordlessInstance(options, clientID, domain);
-      this._setupLock(lock, resolve, reject);
+      const lock = this.getAuth0PasswordlessInstance(clientID, domain);
+      lock[type](options, (...args) => {
+        if (args[0]) {
+          reject(args[0]);
+        }
+
+        resolve(...args.slice(1));
+      });
     });
   },
 
@@ -118,6 +124,10 @@ export default Service.extend({
     lock.on('unrecoverable_error', reject);
     lock.on('authorization_error', reject);
     lock.on('authenticated', (authenticatedData) => {
+      if (isEmpty(authenticatedData)) {
+        return reject(new Error('The authenticated data did not come back from the request'));
+      }
+
       lock.getProfile(authenticatedData.idToken, (error, profile) => {
         if (error) {
           return reject(error);
@@ -126,8 +136,6 @@ export default Service.extend({
         resolve(createSessionDataObject(profile, authenticatedData));
       });
     });
-
-    lock.show();
   },
 
   getAuth0LockInstance(options, clientID = null, domain = null) {
@@ -147,11 +155,11 @@ export default Service.extend({
     });
   },
 
-  getAuth0LockPasswordlessInstance(options, clientID = null, domain = null) {
+  getAuth0PasswordlessInstance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    return new Auth0LockPasswordless(options, clientID, domain);
+    return new Auth0LockPasswordless(clientID, domain);
   },
 
   navigateToLogoutURL() {
@@ -162,7 +170,8 @@ export default Service.extend({
     } = getProperties(this, 'domain', 'logoutURL', 'clientID');
 
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
+      // window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
+      console.log('logging out');
     }
   },
 

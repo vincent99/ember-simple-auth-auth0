@@ -56,8 +56,10 @@ module.exports = function(environment) {
     //   domain: process.env.AUTH0_DOMAIN
     // }
     auth0: {
-      clientID: 'Gcs1jSu5FAFpDrPe0jrqGpfbTEkzCk15',
-      domain: 'pwdlessdemo.auth0.com'
+      // clientID: 'Gcs1jSu5FAFpDrPe0jrqGpfbTEkzCk15',
+      // domain: 'pwdlessdemo.auth0.com'
+      clientID: 'QTrPPogPlnZVteshg3B9rH79ibMxYfzq',
+      domain: 'liteturn.auth0.com'
     }
   };
 
