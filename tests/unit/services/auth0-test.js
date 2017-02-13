@@ -19,7 +19,6 @@ const StubLock = Ember.Object.extend(Evented, {
   profile: null,
   shouldThrowGetProfileError: false,
   getProfile(idToken, callback) {
-    // TODO: figure out when to call error in here
     if (get(this, 'shouldThrowGetProfileError')) {
       callback(new Error('failed to get profile'));
     } else {
@@ -132,12 +131,6 @@ test('showPasswordlessLock assigns options', function(assert) {
 
   assert.ok(subject.getAuth0LockPasswordlessInstance().sms.calledWith(options));
 });
-
-// test('you can pass in clientid and domain', function(assert) {
-//   assert.expect(1);
-//   const subject = this.subject();
-//
-// });
 
 test('showLock calls getProfile', function(assert) {
   assert.expect(1);
