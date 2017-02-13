@@ -35,7 +35,7 @@ export default Service.extend({
   session: service(),
   /**
    * The env config found in the environment config.
-   * ENV['auth0-ember-simple-auth']
+   * ENV['ember-simple-auth'].auth0
    *
    * @type {Object}
    */

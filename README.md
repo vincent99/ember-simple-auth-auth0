@@ -30,7 +30,7 @@ If you don't already have an account, go signup at for free: [Auth0](https://aut
 
 **In your `config/environment.js` file, you must provide the following properties**
 
-1. (REQUIRED) - _clientID_ - Grab from your[Auth0 Dashboard](https://manage.auth0.com/#/clients)
+1. (REQUIRED) - _clientID_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 2. (REQUIRED) - _domain_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 3. (OPTIONAL) - _logoutURL_ - This can be overridden if you have a different logout callback than the login page. This will be used as the redirectURL passed to auth0 upon logging out.
 The logoutURL that is actually gets used is constructed as follows:
@@ -142,7 +142,7 @@ __The new session object will include the following fields__
 ```json
 {
   "authenticated": {
-    "authenticator": "authenticator:auth0-impersonation",
+    "authenticator": "authenticator:auth0-url-hash",
     ...
     "profile": {
       "impersonated": true,

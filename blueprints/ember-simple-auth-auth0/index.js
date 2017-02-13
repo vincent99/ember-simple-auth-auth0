@@ -7,6 +7,7 @@ module.exports = {
   }, // no-op since we're just adding dependencies
   afterInstall() {
     return RSVP.all([
+      // TODO: maybe don't always install latest package?!?
       this.addPackageToProject('ember-simple-auth'),
       this.addBowerPackagesToProject([
         {
