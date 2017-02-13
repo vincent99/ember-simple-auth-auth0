@@ -80,9 +80,7 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _urlHashData: computed(function() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
-    // TODO: Detect error in hash
-
-    return auth0.parseHash(window.location.hash);
+    return auth0.parseHash();
   }),
 
   _setupFutureEvents() {
