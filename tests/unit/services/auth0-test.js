@@ -34,7 +34,7 @@ const StubLock = Ember.Object.extend(Evented, {
 
 moduleFor('service:auth0', 'Unit | Service | auth0', {
   // Specify the other units that are required for this test.
-  // needs: ['service:foo']
+  needs: ['service:session'],
   registerConfig(config) {
     const defaultConfig = {
       rootURL: '/test',
