@@ -27,6 +27,9 @@ const StubLock = Ember.Object.extend(Evented, {
     }
   },
   show: sinon.stub(),
+  sms: sinon.stub(),
+  magiclink: sinon.stub(),
+  emailcode: sinon.stub(),
 });
 
 moduleFor('service:auth0', 'Unit | Service | auth0', {
@@ -112,7 +115,6 @@ test('showPasswordlessLock throws an error when the wrong type is passed in', fu
 
 test('showPasswordlessLock assigns options', function(assert) {
   assert.expect(1);
-  assert.expect(1);
   this.registerConfig();
   const subject = this.subject({
     getAuth0PasswordlessInstance: this.stubLock()
@@ -128,7 +130,7 @@ test('showPasswordlessLock assigns options', function(assert) {
 
   subject.showPasswordlessLock('sms', options);
 
-  assert.ok(subject.getAuth0PasswordlessInstance.calledWith(options));
+  assert.ok(subject.getAuth0PasswordlessInstance().sms.calledWith(options));
 });
 
 // test('you can pass in clientid and domain', function(assert) {

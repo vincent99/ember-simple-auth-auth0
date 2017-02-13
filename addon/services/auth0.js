@@ -170,8 +170,7 @@ export default Service.extend({
     } = getProperties(this, 'domain', 'logoutURL', 'clientID');
 
     if (!testing) {
-      // window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
-      console.log('logging out');
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
     }
   },
 
