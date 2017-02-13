@@ -233,11 +233,60 @@ export default Controller.extend({
 {{/if}}
 ```
 
+# Acceptance Testing
+
+If you want to acceptance test the auth0 lock there are two things you can do. 
+
+- If you are just using the default auth0-lock authenticator then all you have to do is authenticateSession.
+- If you are manually invoking the auth0 lock you should use the `showLock` function on the auth0 service and then call `mockAuth0Lock` in your test.
+ 
+```js
+// tests/acceptance/login.js
+
+import { test } from 'qunit';
+import { mockAuth0Lock } from 'dummy/tests/helpers/ember-simple-auth-auth0';
+import { authenticateSession, currentSession } from 'dummy/tests/helpers/ember-simple-auth';
+import moduleForAcceptance from '../../tests/helpers/module-for-acceptance';
+
+moduleForAcceptance('Acceptance | login');
+
+test('visiting /login redirects to /protected page if authenticated', function(assert) {
+  assert.expect(1);
+  const sessionData = {
+    idToken: 1
+  };
+
+  authenticateSession(this.application, sessionData);
+  visit('/login');
+  andThen(() => {
+    let session = currentSession(this.application);
+    let idToken = get(session, 'data.authenticated.idToken');
+    assert.equal(idToken, sessionData.idToken);
+    assert.equal(currentURL(), '/protected');
+  }); 
+});
+
+test('it mocks the auth0 lock login and logs in the user', function(assert) {
+  assert.expect(1);
+  const sessionData = {
+    idToken: 1
+  };
+
+  mockAuth0Lock(this.application, sessionData);
+  visit('/login');
+  
+  andThen(() => {
+    assert.equal(currentURL(), '/protected');
+  });
+});
+```
+
 # Contributing
 
 ## Cloning
 
 * `git clone` this repository
+* `cd ember-simple-auth-auth0`
 * `npm install`
 * `bower install`
 
@@ -251,7 +300,7 @@ export default Controller.extend({
 
 ## Running Tests
 
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
+* `npm test` (Runs `ember try:each` to test your addon against multiple Ember versions)
 * `ember test`
 * `ember test --server`
 
@@ -259,4 +308,4 @@ export default Controller.extend({
 
 * `ember build`
 
-For more information on using ember-cli, visit [http://ember-cli.com/](http://ember-cli.com/).
+For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).

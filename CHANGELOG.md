@@ -1,6 +1,19 @@
 Changelog
 =========
 
+## v2.2.1 (January 22nd, 2017)
+
+### Pull Requests
+
+- [#33](https://github.com/seawatts/ember-simple-auth-auth0/pull/33) **bugfix**: Fix issue with latest version of auth0-lock  *by [Chris Watts](https://github.com/seawatts/feature)*
+
+## v2.2.0 (December 28th, 2016)
+
+### Pull Requests
+
+- [#23](https://github.com/seawatts/ember-simple-auth-auth0/pull/23) **enhancement**: upgrade dependencies  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#28](https://github.com/seawatts/ember-simple-auth-auth0/pull/28) **enhancement**: Improve ability to show the auth0 lock so that it can be overriden during acceptance tests  *by [Chris Watts](https://github.com/seawatts/feature)*
+
 ## v2.1.4 (December 5th, 2016)
 
 ### Pull Requests

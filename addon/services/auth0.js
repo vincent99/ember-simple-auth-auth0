@@ -1,6 +1,7 @@
-/* globals Auth0Lock, Auth0LockPasswordless, Auth0 */
 import Ember from 'ember';
-import getOwner from 'ember-getowner-polyfill';
+import Auth0 from 'auth0';
+import Auth0Lock from 'auth0-lock';
+import createSessionDataObject from '../utils/create-session-data-object';
 
 const {
   Service,
@@ -9,14 +10,24 @@ const {
     readOnly,
   },
   get,
+  getOwner,
   getProperties,
   assert,
   testing,
   isPresent,
   inject: {
     service
-  }
+  },
+  RSVP,
 } = Ember;
+
+const assign = Ember.assign || Ember.merge;
+
+const validPasswordlessTypes = [
+  'sms',
+  'magiclink',
+  'emailcode'
+];
 
 export default Service.extend({
   session: service(),
@@ -61,34 +72,86 @@ export default Service.extend({
     }
   }),
 
-  getAuth0LockInstance(options) {
-    const {
-      domain,
-      clientID
-    } = getProperties(this, 'domain', 'clientID');
+  showLock(options, clientID = null, domain = null) {
+    let defaultOptions = {
+      autoclose: true,
+      auth: {
+        redirect: false,
+        params: {
+          scope: 'openid'
+        }
+      }
+    };
+
+    options = assign(defaultOptions, options);
+
+    return new RSVP.Promise((resolve, reject) => {
+      const lock = this.getAuth0LockInstance(options, clientID, domain);
+      this._setupLock(lock, resolve, reject);
+    });
+  },
+
+  showPasswordlessLock(type, options, clientID = null, domain = null) {
+    assert(`You must pass in a valid type to auth0-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
+      validPasswordlessTypes.indexOf(type) > -1);
+
+    let defaultOptions = {
+      auth: {
+        params: {
+          scope: 'openid'
+        }
+      }
+    };
+
+    options = assign(defaultOptions, options);
+
+    assert('You must pass in a valid callbackURL in the options block to auth0-passwordless authenticator.',
+      options.callbackURL);
+
+    return new RSVP.Promise((resolve, reject) => {
+      const lock = this.getAuth0LockPasswordlessInstance(options, clientID, domain);
+      this._setupLock(lock, resolve, reject);
+    });
+  },
+
+  _setupLock(lock, resolve, reject) {
+    lock.on('unrecoverable_error', reject);
+    lock.on('authorization_error', reject);
+    lock.on('authenticated', (authenticatedData) => {
+      lock.getProfile(authenticatedData.idToken, (error, profile) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(createSessionDataObject(profile, authenticatedData));
+      });
+    });
+
+    lock.show();
+  },
+
+  getAuth0LockInstance(options, clientID = null, domain = null) {
+    clientID = clientID || get(this, 'clientID');
+    domain = domain || get(this, 'domain');
 
     return new Auth0Lock(clientID, domain, options);
   },
 
-  getAuth0LockPasswordlessInstance() {
-     const {
-      domain,
-      clientID
-    } = getProperties(this, 'domain', 'clientID');
-
-    return new Auth0LockPasswordless(clientID, domain);
-  },
-
-  getAuth0Instance() {
-    const {
-      domain,
-      clientID
-    } = getProperties(this, 'domain', 'clientID');
+  getAuth0Instance(clientID = null, domain = null) {
+    clientID = clientID || get(this, 'clientID');
+    domain = domain || get(this, 'domain');
 
     return new Auth0({
       domain,
       clientID
     });
+  },
+
+  getAuth0LockPasswordlessInstance(options, clientID = null, domain = null) {
+    clientID = clientID || get(this, 'clientID');
+    domain = domain || get(this, 'domain');
+
+    return new Auth0LockPasswordless(options, clientID, domain);
   },
 
   navigateToLogoutURL() {
