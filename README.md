@@ -269,10 +269,8 @@ export default Controller.extend({
       // Check out the docs for all the options:
       // https://github.com/auth0/lock-passwordless#customization
       const lockOptions = {
-       auth: {
-         params: {
-           scope: 'openid user_metadata'
-         }
+       authParams: {
+         scope: 'openid user_metadata'
        }
       };
       
