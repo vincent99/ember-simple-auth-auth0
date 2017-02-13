@@ -52,6 +52,7 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   sessionInvalidated() {
     this._clearJobs();
+    // TODO: maybe don't do this or make it an option in the config
     get(this, 'auth0').navigateToLogoutURL();
   },
 
@@ -59,8 +60,8 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._setupFutureEvents();
     let promise = resolve(this._super(...arguments));
 
-    if (get(this, 'hasImpersonationData')) {
-      promise = promise.then(() => this._authenticateAsImpersonator());
+    if (get(this, 'hasUrlHash')) {
+      promise = promise.then(() => this._authenticateWithUrlHash());
     }
 
     return promise;
@@ -70,14 +71,14 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._clearJobs();
   },
 
-  hasImpersonationData: notEmpty('_impersonationData.idToken'),
+  hasUrlHash: notEmpty('_urlHashData.idToken'),
 
-  _authenticateAsImpersonator() {
-    const impersonationData = get(this, '_impersonationData');
-    return get(this, 'session').authenticate('authenticator:auth0-impersonation', impersonationData);
+  _authenticateWithUrlHash() {
+    const urlHashData = get(this, '_urlHashData');
+    return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData);
   },
 
-  _impersonationData: computed(function() {
+  _urlHashData: computed(function() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
     return auth0.parseHash();
   }),
