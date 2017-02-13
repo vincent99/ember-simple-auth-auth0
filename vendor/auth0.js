@@ -1,7 +1,7 @@
 (function() {
-  /* globals define, Auth0 */
+  /* globals define, auth0 */
   define('auth0', [], function() {
     'use strict';
-    return { default: Auth0 };
+    return { default: auth0.WebAuth};
   });
 })();

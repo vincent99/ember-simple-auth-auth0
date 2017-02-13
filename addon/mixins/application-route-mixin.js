@@ -79,7 +79,15 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _impersonationData: computed(function() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
-    return auth0.parseHash();
+    return new Promise((resolve, reject) => {
+      auth0.parseHash((err, parsedPayload) => {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve(parsedPayload);
+      });
+    });
   }),
 
   _setupFutureEvents() {
