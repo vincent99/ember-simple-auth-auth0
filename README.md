@@ -233,6 +233,63 @@ export default Controller.extend({
 {{/if}}
 ```
 
+# Passwordless 
+
+__In order to perform passwordless login you need to use *authenticator:auth0-lock-passwordless* and pass in one of the valid passwordless types.__
+
+### Passwordless Types
+
+* sms
+* emailcode
+* magiclink
+
+### Customization
+
+To see a list of options that can be used with the passwordless authenticator please see [auth0-lock-passwordless repo](https://github.com/auth0/lock-passwordless#customization)
+
+## Example
+
+```js
+// app/controllers/application.js
+
+import Ember from 'ember';
+
+const {
+  Controller,
+  inject: {
+    service
+  },
+  get
+} = Ember;
+
+export default Controller.extend({
+  session: service(),
+  actions: {
+    login () {
+      // Check out the docs for all the options:
+      // https://github.com/auth0/lock-passwordless#customization
+      const lockOptions = {
+       auth: {
+         params: {
+           scope: 'openid user_metadata'
+         }
+       }
+      };
+      
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', 'magiclink', lockOptions, (err, email) => {
+        console.log(`Email link sent to ${email}!`)
+      });
+    },
+
+    logout () {
+      get(this, 'session').invalidate();
+    }
+  }
+});
+```
+
+__Note that you can pass in a callback as the last argument. This proxies the lock-passwordless callback call so that the developer can then handle events after a passwordless link has been sent__
+
 # Acceptance Testing
 
 If you want to acceptance test the auth0 lock there are two things you can do. 

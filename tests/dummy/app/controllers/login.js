@@ -17,7 +17,7 @@ export default Controller.extend({
         autoclose: true,
       };
 
-      get(this, 'session').authenticate('authenticator:auth0-passwordless', type, lockOptions, () => {
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', type, lockOptions, () => {
         console.log('Passwordless thing sent');
       });
     }

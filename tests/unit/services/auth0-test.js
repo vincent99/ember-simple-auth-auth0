@@ -117,7 +117,7 @@ test('showPasswordlessLock assigns options', function(assert) {
   assert.expect(1);
   this.registerConfig();
   const subject = this.subject({
-    getAuth0PasswordlessInstance: this.stubLock()
+    getAuth0LockPasswordlessInstance: this.stubLock()
   });
 
   const options = {
@@ -130,7 +130,7 @@ test('showPasswordlessLock assigns options', function(assert) {
 
   subject.showPasswordlessLock('sms', options);
 
-  assert.ok(subject.getAuth0PasswordlessInstance().sms.calledWith(options));
+  assert.ok(subject.getAuth0LockPasswordlessInstance().sms.calledWith(options));
 });
 
 // test('you can pass in clientid and domain', function(assert) {

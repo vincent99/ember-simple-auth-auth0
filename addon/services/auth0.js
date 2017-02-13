@@ -95,7 +95,7 @@ export default Service.extend({
   },
 
   showPasswordlessLock(type, options, clientID = null, domain = null) {
-    assert(`You must pass in a valid type to auth0-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
+    assert(`You must pass in a valid type to auth0-lock-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
       validPasswordlessTypes.indexOf(type) > -1);
 
     let defaultOptions = {
@@ -108,15 +108,9 @@ export default Service.extend({
 
     options = assign(defaultOptions, options);
 
-    return new RSVP.Promise((resolve, reject) => {
-      const lock = this.getAuth0PasswordlessInstance(clientID, domain);
-      lock[type](options, (...args) => {
-        if (args[0]) {
-          reject(args[0]);
-        }
-
-        resolve(...args.slice(1));
-      });
+    return new RSVP.Promise((resolve) => {
+      const lock = this.getAuth0LockPasswordlessInstance(clientID, domain);
+      lock[type](options, (...args) => resolve(...args));
     });
   },
 
@@ -155,7 +149,7 @@ export default Service.extend({
     });
   },
 
-  getAuth0PasswordlessInstance(clientID = null, domain = null) {
+  getAuth0LockPasswordlessInstance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
