@@ -42,7 +42,6 @@ test('it sets the correct expiration time if the exp is on idTokenPayload block'
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 10);
@@ -59,7 +58,6 @@ test('it sets the correct expiration time if the exp is on the authenticated blo
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 10);
@@ -78,7 +76,6 @@ test('it does not set the exp time if the user is not authenticated', function(a
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 0);
@@ -90,10 +87,9 @@ test('it calls the auth0-url-hash authenticator if we have url hash data', funct
     session: {
       authenticate: this.stub().returns(RSVP.resolve())
     },
-    _urlHashData: {
+    _getUrlHashData: this.stub().returns(RSVP.resolve({
       idToken: 1
-    },
-    hasUrlHash: true,
+    })),
   });
 
   run(() => subject.beforeModel());
@@ -108,7 +104,7 @@ test('it does not call the auth0-url-hash authenticator if we do not have url ha
     session: {
       authenticate: this.stub().returns(RSVP.resolve())
     },
-    hasUrlHash: false,
+    _getUrlHashData: this.stub().returns(RSVP.resolve()),
   });
 
   run(() => subject.beforeModel());
