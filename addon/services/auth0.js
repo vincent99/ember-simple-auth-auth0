@@ -10,6 +10,7 @@ const {
   computed: {
     readOnly,
   },
+  deprecate,
   get,
   getOwner,
   getProperties,
@@ -60,6 +61,20 @@ export default Service.extend({
    * @type {String}
    */
   domain: readOnly('config.domain'),
+
+  isGreaterThanVersion8: computed(function() {
+    const isGreaterThanVersion8 = semver.satisfies(Auth0.version, '>=8');
+
+    deprecate(
+      'Please use the new version of auth0; version >= 8.x.x',
+      isGreaterThanVersion8, {
+        id: 'ember-simple-auth-auth0',
+        until: 'v3.0.0',
+        url: 'https://auth0.com/docs/libraries/auth0js/migration-guide'
+      });
+
+    return isGreaterThanVersion8;
+  }),
 
   logoutURL: computed({
     get() {
@@ -143,7 +158,13 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    return new Auth0({
+    let Auth0Constructor = Auth0;
+
+    if (get(this, 'isGreaterThanVersion8')) {
+      Auth0Constructor = Auth0.WebAuth;
+    }
+
+    return new Auth0Constructor({
       domain,
       clientID
     });

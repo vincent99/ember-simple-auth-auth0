@@ -1,7 +1,13 @@
 (function() {
-  /* globals define, auth0 */
+  /* globals define */
   define('auth0', [], function() {
     'use strict';
-    return { default: auth0.WebAuth};
+
+    // Handle auth0.js v8.x.x
+    if (window.auth0 && window.auth0.WebAuth) {
+      return { default: window.auth0 };
+    }
+
+    return { default: window.Auth0 };
   });
 })();
