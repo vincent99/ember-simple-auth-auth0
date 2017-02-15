@@ -237,5 +237,18 @@ export default Service.extend({
   }),
 
   _baseURL: readOnly('_environmentConfig.baseURL'),
-  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute')
+  _authenticationRoute: computed({
+    get() {
+      const applicationController = getOwner(this).lookup('route:application');
+      if (isPresent(applicationController)) {
+        let authenticationRoute = get(applicationController, 'authenticationRoute');
+
+        if (isPresent(authenticationRoute)) {
+          return authenticationRoute;
+        }
+      }
+
+      return get(this, ('_emberSimpleAuthConfig.authenticationRoute'));
+    }
+  }),
 });
