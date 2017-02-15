@@ -64,6 +64,7 @@
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
+    "demoURL": "http://ember-simple-auth-auth0.github.io",
     "after": [
       "ember-simple-auth"
     ]
