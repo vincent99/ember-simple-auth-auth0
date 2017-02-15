@@ -336,6 +336,8 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 });
 ```
 
+TODO: Show how to handle errors
+
 # Contributing
 
 ## Cloning

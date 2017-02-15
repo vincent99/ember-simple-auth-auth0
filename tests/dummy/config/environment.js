@@ -52,8 +52,8 @@ module.exports = function(environment) {
     routeAfterAuthentication: 'protected',
     routeIfAlreadyAuthenticated: 'protected',
     auth0: {
-      clientID: 'Gcs1jSu5FAFpDrPe0jrqGpfbTEkzCk15',
-      domain: 'pwdlessdemo.auth0.com'
+      clientID: '7CAwfka4fAh6YCLdtz8MZ5yAq5gQ1k7t',
+      domain: 'ember-demo.auth0.com'
     }
   };
 

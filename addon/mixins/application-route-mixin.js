@@ -4,12 +4,10 @@ import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mi
 const {
   Mixin,
   computed,
-  computed: {
-    notEmpty
-  },
   get,
   getWithDefault,
   set,
+  RSVP,
   RSVP: {
     resolve
   },
@@ -20,6 +18,7 @@ const {
   testing,
   deprecate,
   isPresent,
+  isEmpty,
 } = Ember;
 
 export default Mixin.create(ApplicationRouteMixin, {
@@ -60,9 +59,16 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._setupFutureEvents();
     let promise = resolve(this._super(...arguments));
 
-    if (get(this, 'hasUrlHash')) {
-      promise = promise.then(() => this._authenticateWithUrlHash());
-    }
+    promise = promise.then(() => {
+      return this._getUrlHashData()
+        .then((urlHashData) => {
+          if (isEmpty(urlHashData)) {
+            return;
+          }
+
+          return this._authenticateWithUrlHash(urlHashData);
+        });
+    });
 
     return promise;
   },
@@ -71,18 +77,51 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._clearJobs();
   },
 
-  hasUrlHash: notEmpty('_urlHashData.idToken'),
-
-  _authenticateWithUrlHash() {
-    const urlHashData = get(this, '_urlHashData');
+  _authenticateWithUrlHash(urlHashData) {
     return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData);
   },
 
-  _urlHashData: computed(function() {
-    const auth0 = get(this, 'auth0').getAuth0Instance();
-    return auth0.parseHash();
-  }),
+  _getUrlHashData() {
+    if (get(this, 'auth0.isGreaterThanVersion8')) {
+      return this._getNewUrlHashData();
+    }
 
+    return this._getDeprecatedUrlHashData();
+  },
+
+  _getNewUrlHashData() {
+    const auth0 = get(this, 'auth0').getAuth0Instance();
+    return new RSVP.Promise((resolve, reject) => {
+      // TODO: Check to see if we cannot parse the hash or check to see which version of auth0 we are using.... ugh
+      auth0.parseHash((err, parsedPayload) => {
+        if (err) {
+          if (err.errorDescription) {
+            err.errorDescription = decodeURI(err.errorDescription);
+          }
+
+          return reject(err);
+        }
+
+        resolve(parsedPayload);
+      });
+    });
+  },
+
+  _getDeprecatedUrlHashData() {
+    return new RSVP.Promise((resolve, reject) => {
+
+      const auth0 = get(this, 'auth0').getAuth0Instance();
+      const parsedPayload = auth0.parseHash();
+
+      if (parsedPayload && parsedPayload.error && parsedPayload.error_description) {
+        parsedPayload.errorDescription = decodeURI(parsedPayload.error_description);
+        delete parsedPayload.error_description;
+        return reject(parsedPayload);
+      }
+
+      return resolve(parsedPayload);
+    });
+  },
   _setupFutureEvents() {
     // Don't schedule expired events during testing, otherwise acceptance tests will hang.
     if (testing) {

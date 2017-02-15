@@ -1,8 +1,8 @@
 (function() {
-  /* globals define, Auth0LockPasswordless */
+  /* globals define */
   define('auth0-lock-passwordless', [], function() {
     'use strict';
 
-    return { default: Auth0LockPasswordless };
+    return { default: window.Auth0LockPasswordless };
   });
 })();
