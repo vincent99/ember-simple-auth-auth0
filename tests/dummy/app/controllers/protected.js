@@ -2,12 +2,18 @@ import Ember from 'ember';
 
 const {
   Controller,
-  inject,
+  inject: {
+    service,
+  },
+  computed: {
+    alias,
+  },
   get
 } = Ember;
 
 export default Controller.extend({
-  session: inject.service(),
+  session: service(),
+  myModel: alias('model'),
   actions: {
     logout() {
       get(this, 'session').invalidate();

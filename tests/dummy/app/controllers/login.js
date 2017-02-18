@@ -2,12 +2,19 @@ import Ember from 'ember';
 
 const {
   Controller,
-  inject,
+  inject: {
+    service,
+  },
+  computed: {
+    alias,
+  },
   get,
+  Logger,
 } = Ember;
 
 export default Controller.extend({
-  session: inject.service(),
+  session: service(),
+  myModel: alias('model'),
   actions: {
     login() {
       get(this, 'session').authenticate('authenticator:auth0-lock');
@@ -18,7 +25,7 @@ export default Controller.extend({
       };
 
       get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', type, lockOptions, () => {
-        console.log('Passwordless thing sent');
+        Logger.info(`Passwordless ${type} sent`);
       });
     }
   }

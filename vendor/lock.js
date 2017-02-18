@@ -1,5 +1,5 @@
 (function() {
-  /* globals define */
+  /* global define */
   define('auth0-lock', [], function() {
     'use strict';
 
