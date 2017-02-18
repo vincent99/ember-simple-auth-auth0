@@ -1,9 +1,10 @@
+/* global semver */
+
 import Ember from 'ember';
 import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
-
 const {
   Service,
   computed,
