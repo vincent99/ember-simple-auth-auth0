@@ -59,16 +59,9 @@ export default Mixin.create(ApplicationRouteMixin, {
     this._setupFutureEvents();
     let promise = resolve(this._super(...arguments));
 
-    promise = promise.then(() => {
-      return this._getUrlHashData()
-        .then((urlHashData) => {
-          if (isEmpty(urlHashData)) {
-            return;
-          }
-
-          return this._authenticateWithUrlHash(urlHashData);
-        });
-    });
+    promise = promise
+      .then(this._getUrlHashData.bind(this))
+      .then(this._authenticateWithUrlHash.bind(this));
 
     return promise;
   },
@@ -78,6 +71,10 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _authenticateWithUrlHash(urlHashData) {
+    if (isEmpty(urlHashData)) {
+      return;
+    }
+
     return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData);
   },
 
@@ -188,13 +185,15 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _processSessionExpired() {
-    this.beforeSessionExpired()
-      .then(() => {
-        let session = get(this, 'session');
-
-        if (get(session, 'isAuthenticated')) {
-          session.invalidate();
-        }
-      });
+    return this.beforeSessionExpired()
+      .then(this._invalidateIfAuthenticated.bind(this));
   },
+
+  _invalidateIfAuthenticated() {
+    let session = get(this, 'session');
+
+    if (get(session, 'isAuthenticated')) {
+      session.invalidate();
+    }
+  }
 });
