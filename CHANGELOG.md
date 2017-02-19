@@ -1,24 +1,32 @@
 Changelog
 =========
 
+## v2.3.0 (February 18th, 2017) 
+
+### Pull Requests
+- [#42](https://github.com/seawatts/ember-simple-auth-auth0/pull/42) **enhancement**: Update ember-simple-auth v1.2.0  *by [Chris Watts](https://github.com/seawatts)*
+- [#45](https://github.com/seawatts/ember-simple-auth-auth0/pull/45) **enhancement**: Add eslint *by [Chris Watts](https://github.com/seawatts)*
+- [#41](https://github.com/seawatts/ember-simple-auth-auth0/pull/41) **enhancement**: Add ability to use v8 of auth0.js *by [Chris Watts](https://github.com/seawatts)*
+- [#40](https://github.com/seawatts/ember-simple-auth-auth0/pull/40) **enhancement**: Change auth0-impersonation authenticator to auth0-url-hash  *by [Chris Watts](https://github.com/seawatts)*
+
 ## v2.2.1 (January 22nd, 2017)
 
 ### Pull Requests
 
-- [#33](https://github.com/seawatts/ember-simple-auth-auth0/pull/33) **bugfix**: Fix issue with latest version of auth0-lock  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#33](https://github.com/seawatts/ember-simple-auth-auth0/pull/33) **bugfix**: Fix issue with latest version of auth0-lock  *by [Chris Watts](https://github.com/seawatts)*
 
 ## v2.2.0 (December 28th, 2016)
 
 ### Pull Requests
 
-- [#23](https://github.com/seawatts/ember-simple-auth-auth0/pull/23) **enhancement**: upgrade dependencies  *by [Chris Watts](https://github.com/seawatts/feature)*
-- [#28](https://github.com/seawatts/ember-simple-auth-auth0/pull/28) **enhancement**: Improve ability to show the auth0 lock so that it can be overriden during acceptance tests  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#23](https://github.com/seawatts/ember-simple-auth-auth0/pull/23) **enhancement**: upgrade dependencies  *by [Chris Watts](https://github.com/seawatts)*
+- [#28](https://github.com/seawatts/ember-simple-auth-auth0/pull/28) **enhancement**: Improve ability to show the auth0 lock so that it can be overriden during acceptance tests  *by [Chris Watts](https://github.com/seawatts)*
 
 ## v2.1.4 (December 5th, 2016)
 
 ### Pull Requests
 
-- [#20](https://github.com/seawatts/ember-simple-auth-auth0/pull/20) **fix**: issue where the session would not be invalided when the token is expired  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#20](https://github.com/seawatts/ember-simple-auth-auth0/pull/20) **fix**: issue where the session would not be invalided when the token is expired  *by [Chris Watts](https://github.com/seawatts)*
 
 ## v2.1.3 (December 5th, 2016)
 
