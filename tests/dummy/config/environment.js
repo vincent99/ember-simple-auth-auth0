@@ -53,7 +53,8 @@ module.exports = function(environment) {
     routeIfAlreadyAuthenticated: 'protected',
     auth0: {
       clientID: '7CAwfka4fAh6YCLdtz8MZ5yAq5gQ1k7t',
-      domain: 'ember-demo.auth0.com'
+      domain: 'ember-demo.auth0.com',
+      logoutReturnToURL: 'http://localhost:4200/login',
     }
   };
 
