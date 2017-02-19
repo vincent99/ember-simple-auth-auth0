@@ -29,32 +29,14 @@ moduleFor('mixin:application-route-mixin', 'Unit | Mixin | application route mix
   }
 });
 
-test('it sets the correct expiration time if the exp is on idTokenPayload block', function(assert) {
+test('it sets the correct expiration time if the expiresIn exists', function(assert) {
   assert.expect(1);
   const subject = this.subject({
     session: {
       isAuthenticated: true,
       data: {
         authenticated: {
-          idTokenPayload: {
-            exp: 10,
-          },
-        },
-      },
-    },
-  });
-
-  assert.equal(get(subject, '_expiresAt'), 10);
-});
-
-test('it sets the correct expiration time if the exp is on the authenticated block', function(assert) {
-  assert.expect(1);
-  const subject = this.subject({
-    session: {
-      isAuthenticated: true,
-      data: {
-        authenticated: {
-          exp: 10,
+          expiresIn: 10,
         },
       },
     },
@@ -70,9 +52,7 @@ test('it does not set the exp time if the user is not authenticated', function(a
       isAuthenticated: false,
       data: {
         authenticated: {
-          idTokenPayload: {
-            exp: 10,
-          },
+          expiresIn: 10,
         },
       },
     },
@@ -110,17 +90,4 @@ test('it does not call the auth0-url-hash authenticator if we do not have url ha
   run(() => subject.beforeModel());
 
   assert.notOk(subject.session.authenticate.calledOnce);
-});
-
-test('it calls auth0.navigateToLogoutUrl() if the session is invalidated', function(assert) {
-  assert.expect(1);
-  const subject = this.subject({
-    auth0: {
-      navigateToLogoutURL: this.stub(),
-    },
-  });
-
-  run(() => subject.sessionInvalidated());
-
-  assert.ok(subject.auth0.navigateToLogoutURL.calledOnce);
 });

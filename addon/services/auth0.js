@@ -5,6 +5,7 @@ import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
+
 const {
   Service,
   computed,
@@ -17,12 +18,10 @@ const {
   getProperties,
   assert,
   testing,
-  isPresent,
   isEmpty,
   inject: {
     service
   },
-  typeOf,
   RSVP,
 } = Ember;
 
@@ -44,7 +43,7 @@ export default Service.extend({
    */
   config: computed({
     get() {
-      const emberSimpleAuthConfig = get(this, '_emberSimpleAuthConfig');
+      const emberSimpleAuthConfig = get(this, '_environmentConfig')['ember-simple-auth'];
       assert('ember-simple-auth config must be defined', emberSimpleAuthConfig);
       assert('ember-simple-auth.auth0 config must be defined', emberSimpleAuthConfig.auth0);
 
@@ -78,31 +77,7 @@ export default Service.extend({
     return isGreaterThanVersion8;
   }),
 
-  logoutURL: computed({
-    get() {
-      const logoutReturnToURL = get(this, 'config.logoutReturnToURL');
-
-      deprecate(
-        "logoutURL is being deprecated please set ENV['ember-simple-auth].auth0.logoutReturnToURL",
-        isPresent(logoutReturnToURL), {
-          id: 'ember-simple-auth-auth0.services.auth0',
-          until: 'v3.0.0',
-        });
-
-      if (isPresent(logoutReturnToURL)) {
-        return logoutReturnToURL;
-      }
-
-      const loginURI = get(this, '_loginURI');
-      let location = `${window.location.protocol}//${window.location.host}`;
-
-      if (isPresent(loginURI)) {
-        location += `/${loginURI}`;
-      }
-
-      return location;
-    }
-  }),
+  logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
   showLock(options, clientID = null, domain = null) {
     let defaultOptions = {
@@ -147,6 +122,8 @@ export default Service.extend({
   _setupLock(lock, resolve, reject) {
     lock.on('unrecoverable_error', reject);
     lock.on('authorization_error', reject);
+
+    // lock.on('hash_parsed', resolve);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
         return reject(new Error('The authenticated data did not come back from the request'));
@@ -195,13 +172,18 @@ export default Service.extend({
   navigateToLogoutURL() {
     const {
       domain,
-      logoutURL,
+      logoutReturnToURL,
       clientID
-    } = getProperties(this, 'domain', 'logoutURL', 'clientID');
+    } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
 
+    // TODO: deprecate and use logout
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
+  },
+
+  logout() {
+    get(this, 'session').invalidate().then(this.navigateToLogoutURL.bind(this));
   },
 
   _environmentConfig: computed({
@@ -209,64 +191,4 @@ export default Service.extend({
       return getOwner(this).resolveRegistration('config:environment');
     }
   }),
-
-  _emberSimpleAuthConfig: computed({
-    get() {
-      return get(this, '_environmentConfig')['ember-simple-auth'];
-    }
-  }),
-
-  _loginURI: computed({
-    get() {
-      const {
-        _redirectURI,
-        _rootURL,
-        _authenticationRoute,
-      } = getProperties(this, '_redirectURI', '_rootURL', '_authenticationRoute');
-
-      let loginURI = _rootURL;
-
-      if (isPresent(_authenticationRoute)) {
-        loginURI += `/${_authenticationRoute}`;
-      }
-
-      if (isPresent(_redirectURI)) {
-        loginURI = _redirectURI;
-      }
-
-      // Strip all leading / (slash) because we will add it back in during the logoutURL creation
-      if (isPresent(loginURI) && typeOf(loginURI) === 'string') {
-        return loginURI.replace(/(^[/\s]+)/g, '');
-      }
-
-      return '';
-    }
-  }),
-  _redirectURI: computed({
-    get() {
-      let redirectURI = get(this, 'config.redirectURI');
-      deprecate(
-        "ENV['ember-simple-auth'].auth0.redirectURI is being deprecated. Please use ENV['ember-simple-auth'].auth0.logoutReturnToURL",
-        isEmpty(redirectURI), {
-          id: 'ember-simple-auth-auth0.services.auth0',
-          until: 'v3.0.0',
-        });
-
-      return redirectURI || get(this, 'config.logoutReturnToURL') || '';
-    }
-  }),
-  _rootURL: computed({
-    get() {
-      const rootURL = get(this, '_environmentConfig.rootURL');
-      if (isPresent(rootURL)) {
-        return rootURL;
-      }
-
-      // NOTE: this is for backwards compatibility for those who are not yet using rootURL
-      return get(this, '_baseURL');
-    }
-  }),
-
-  _baseURL: readOnly('_environmentConfig.baseURL'),
-  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute'),
 });

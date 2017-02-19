@@ -24,16 +24,3 @@ test('it adds the Authorization Bearer token to the block if we are using idToke
 
   assert.ok(block.calledWith('Authorization', `Bearer ${sessionData.idToken}`));
 });
-
-test('it adds the Authorization Bearer token to the block if we are using jwt key', function(assert) {
-  let block = this.spy();
-  let sessionData = {
-    jwt: 'aaa.bbb.ccc'
-  };
-
-  let authorizer = this.subject();
-
-  authorizer.authorize(sessionData, block);
-
-  assert.ok(block.calledWith('Authorization', `Bearer ${sessionData.jwt}`));
-});
