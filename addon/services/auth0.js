@@ -22,6 +22,7 @@ const {
   inject: {
     service
   },
+  typeOf,
   RSVP,
 } = Ember;
 
@@ -79,6 +80,19 @@ export default Service.extend({
 
   logoutURL: computed({
     get() {
+      const logoutReturnToURL = get(this, 'config.logoutReturnToURL');
+
+      deprecate(
+        "logoutURL is being deprecated please set ENV['ember-simple-auth].auth0.logoutReturnToURL",
+        isPresent(logoutReturnToURL), {
+          id: 'ember-simple-auth-auth0.services.auth0',
+          until: 'v3.0.0',
+        });
+
+      if (isPresent(logoutReturnToURL)) {
+        return logoutReturnToURL;
+      }
+
       const loginURI = get(this, '_loginURI');
       let location = `${window.location.protocol}//${window.location.host}`;
 
@@ -221,10 +235,26 @@ export default Service.extend({
       }
 
       // Strip all leading / (slash) because we will add it back in during the logoutURL creation
-      return loginURI.replace(/(^[/\s]+)/g, '');
+      if (isPresent(loginURI) && typeOf(loginURI) === 'string') {
+        return loginURI.replace(/(^[/\s]+)/g, '');
+      }
+
+      return '';
     }
   }),
-  _redirectURI: readOnly('config.redirectURI'),
+  _redirectURI: computed({
+    get() {
+      let redirectURI = get(this, 'config.redirectURI');
+      deprecate(
+        "ENV['ember-simple-auth'].auth0.redirectURI is being deprecated. Please use ENV['ember-simple-auth'].auth0.logoutReturnToURL",
+        isEmpty(redirectURI), {
+          id: 'ember-simple-auth-auth0.services.auth0',
+          until: 'v3.0.0',
+        });
+
+      return redirectURI || get(this, 'config.logoutReturnToURL') || '';
+    }
+  }),
   _rootURL: computed({
     get() {
       const rootURL = get(this, '_environmentConfig.rootURL');
@@ -238,5 +268,5 @@ export default Service.extend({
   }),
 
   _baseURL: readOnly('_environmentConfig.baseURL'),
-  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute')
+  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute'),
 });
