@@ -105,6 +105,21 @@ test('it calculates the logoutURL correctly giving redirectURI precedence', func
     `${this.windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
 });
 
+test('it calculates the logoutURL correctly giving logoutReturnToURL precedence', function(assert) {
+  const config = this.registerConfig({
+    ['ember-simple-auth']: {
+      authenticationRoute: 'login',
+      auth0: {
+        logoutReturnToURL: `${this.windowLocation()}/my-login`
+      }
+    }
+  });
+
+  let service = this.subject();
+  assert.equal(get(service, 'logoutURL'),
+    config['ember-simple-auth'].auth0.logoutReturnToURL);
+});
+
 test('showPasswordlessLock throws an error when the wrong type is passed in', function(assert) {
   assert.expect(1);
   this.registerConfig();

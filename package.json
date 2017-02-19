@@ -1,6 +1,6 @@
 {
   "name": "ember-simple-auth-auth0",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "ember-simple-auth addon for Auth0 + Lock.js.",
   "directories": {
     "doc": "doc",
@@ -59,7 +59,7 @@
   ],
   "dependencies": {
     "ember-cli-babel": "^5.1.7",
-    "ember-simple-auth": "1.1.0",
+    "ember-simple-auth": "1.2.0",
     "rsvp": "^3.3.3"
   },
   "ember-addon": {
