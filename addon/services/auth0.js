@@ -1,33 +1,44 @@
+/* global semver */
+
 import Ember from 'ember';
 import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
+import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
-
 const {
   Service,
   computed,
   computed: {
     readOnly,
   },
+  deprecate,
   get,
   getOwner,
   getProperties,
   assert,
   testing,
   isPresent,
+  isEmpty,
   inject: {
     service
   },
+  typeOf,
   RSVP,
 } = Ember;
 
 const assign = Ember.assign || Ember.merge;
 
+const validPasswordlessTypes = [
+  'sms',
+  'magiclink',
+  'emailcode'
+];
+
 export default Service.extend({
   session: service(),
   /**
    * The env config found in the environment config.
-   * ENV['auth0-ember-simple-auth']
+   * ENV['ember-simple-auth'].auth0
    *
    * @type {Object}
    */
@@ -53,8 +64,35 @@ export default Service.extend({
    */
   domain: readOnly('config.domain'),
 
+  isGreaterThanVersion8: computed(function() {
+    const isGreaterThanVersion8 = semver.satisfies(Auth0.version, '>=8');
+
+    deprecate(
+      'Please use the new version of auth0; version >= 8.x.x',
+      isGreaterThanVersion8, {
+        id: 'ember-simple-auth-auth0',
+        until: 'v3.0.0',
+        url: 'https://auth0.com/docs/libraries/auth0js/migration-guide'
+      });
+
+    return isGreaterThanVersion8;
+  }),
+
   logoutURL: computed({
     get() {
+      const logoutReturnToURL = get(this, 'config.logoutReturnToURL');
+
+      deprecate(
+        "logoutURL is being deprecated please set ENV['ember-simple-auth].auth0.logoutReturnToURL",
+        isPresent(logoutReturnToURL), {
+          id: 'ember-simple-auth-auth0.services.auth0',
+          until: 'v3.0.0',
+        });
+
+      if (isPresent(logoutReturnToURL)) {
+        return logoutReturnToURL;
+      }
+
       const loginURI = get(this, '_loginURI');
       let location = `${window.location.protocol}//${window.location.host}`;
 
@@ -80,22 +118,50 @@ export default Service.extend({
     options = assign(defaultOptions, options);
 
     return new RSVP.Promise((resolve, reject) => {
-      let lock = this.getAuth0LockInstance(options, clientID, domain);
-      lock.on('unrecoverable_error', reject);
-      lock.on('authorization_error', reject);
-      lock.on('authenticated', (authenticatedData) => {
-        lock.getProfile(authenticatedData.idToken, (error, profile) => {
-          if (error) {
-            return reject(error);
-          }
-
-          resolve(createSessionDataObject(profile, authenticatedData));
-        });
-      });
-
+      const lock = this.getAuth0LockInstance(options, clientID, domain);
+      this._setupLock(lock, resolve, reject);
       lock.show();
     });
   },
+
+  showPasswordlessLock(type, options, clientID = null, domain = null) {
+    assert(`You must pass in a valid type to auth0-lock-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
+      validPasswordlessTypes.indexOf(type) > -1);
+
+    let defaultOptions = {
+      auth: {
+        params: {
+          scope: 'openid'
+        }
+      }
+    };
+
+    options = assign(defaultOptions, options);
+
+    return new RSVP.Promise((resolve) => {
+      const lock = this.getAuth0LockPasswordlessInstance(clientID, domain);
+      lock[type](options, (...args) => resolve(...args));
+    });
+  },
+
+  _setupLock(lock, resolve, reject) {
+    lock.on('unrecoverable_error', reject);
+    lock.on('authorization_error', reject);
+    lock.on('authenticated', (authenticatedData) => {
+      if (isEmpty(authenticatedData)) {
+        return reject(new Error('The authenticated data did not come back from the request'));
+      }
+
+      lock.getProfile(authenticatedData.idToken, (error, profile) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(createSessionDataObject(profile, authenticatedData));
+      });
+    });
+  },
+
   getAuth0LockInstance(options, clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
@@ -107,10 +173,23 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    return new Auth0({
+    let Auth0Constructor = Auth0;
+
+    if (get(this, 'isGreaterThanVersion8')) {
+      Auth0Constructor = Auth0.WebAuth;
+    }
+
+    return new Auth0Constructor({
       domain,
       clientID
     });
+  },
+
+  getAuth0LockPasswordlessInstance(clientID = null, domain = null) {
+    clientID = clientID || get(this, 'clientID');
+    domain = domain || get(this, 'domain');
+
+    return new Auth0LockPasswordless(clientID, domain);
   },
 
   navigateToLogoutURL() {
@@ -156,10 +235,26 @@ export default Service.extend({
       }
 
       // Strip all leading / (slash) because we will add it back in during the logoutURL creation
-      return loginURI.replace(/(^[/\s]+)/g, '');
+      if (isPresent(loginURI) && typeOf(loginURI) === 'string') {
+        return loginURI.replace(/(^[/\s]+)/g, '');
+      }
+
+      return '';
     }
   }),
-  _redirectURI: readOnly('config.redirectURI'),
+  _redirectURI: computed({
+    get() {
+      let redirectURI = get(this, 'config.redirectURI');
+      deprecate(
+        "ENV['ember-simple-auth'].auth0.redirectURI is being deprecated. Please use ENV['ember-simple-auth'].auth0.logoutReturnToURL",
+        isEmpty(redirectURI), {
+          id: 'ember-simple-auth-auth0.services.auth0',
+          until: 'v3.0.0',
+        });
+
+      return redirectURI || get(this, 'config.logoutReturnToURL') || '';
+    }
+  }),
   _rootURL: computed({
     get() {
       const rootURL = get(this, '_environmentConfig.rootURL');
@@ -173,5 +268,5 @@ export default Service.extend({
   }),
 
   _baseURL: readOnly('_environmentConfig.baseURL'),
-  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute')
+  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute'),
 });

@@ -1,1 +1,12 @@
-<a href="#" class="login" {{action "login"}}>Show Auth0 Login</a>
+<div>
+  <a href="#" class="login" {{action "login"}}>Show Auth0 Login</a>
+</div>
+<div>
+  <a href="#" {{action "loginPasswordless" "magiclink"}}>Show Auth0 magic Login</a>
+</div>
+<div>
+  <a href="#" {{action "loginPasswordless" "sms"}}>Show Auth0 sms Login</a>
+</div>
+<div>
+  <a href="#" {{action "loginPasswordless" "emailcode"}}>Show Auth0 email code Login</a>
+</div>

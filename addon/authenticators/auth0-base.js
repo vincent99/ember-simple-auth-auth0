@@ -1,39 +1,19 @@
 import Ember from 'ember';
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
-import createSessionDataObject from '../utils/create-session-data-object';
 
 const {
   RSVP,
   get,
-  getProperties,
   inject: {
     service
   },
   isEmpty,
-  deprecate,
+  getProperties,
+  deprecate
 } = Ember;
 
 export default BaseAuthenticator.extend({
   auth0: service(),
-  session: service(),
-  authenticate(impersonationData) {
-    return new RSVP.Promise((resolve, reject) => {
-      if (isEmpty(impersonationData)) {
-        reject();
-      }
-
-      const auth0 = get(this, 'auth0').getAuth0Instance();
-
-      auth0.getUserInfo(impersonationData.accessToken, (err, profile) => {
-        if (err) {
-          return reject(err);
-        }
-
-        resolve(createSessionDataObject(profile, impersonationData));
-      });
-    });
-  },
-
   restore(data) {
     const {
       jwt,
@@ -43,18 +23,29 @@ export default BaseAuthenticator.extend({
     deprecate(
       'Should use "idToken" as the key for the authorization token instead of "jwt" key on the session data',
       isEmpty(jwt), {
-        id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
+        id: 'ember-simple-auth-auth0.authenticators.auth0-base.restore',
         until: 'v3.0.0',
       });
-
 
     deprecate(
       'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
       isEmpty(exp), {
-        id: 'ember-simple-auth-auth0.authenticators.auth0-impersonation.restore',
+        id: 'ember-simple-auth-auth0.authenticators.auth0-base.restore',
         until: 'v3.0.0',
       });
 
     return RSVP.resolve(data);
-  }
+  },
+
+  invalidate() {
+    deprecate(
+      'session.invalidate will no longer navigate to the auth0 logout url. Please call auth0.navigateToLogoutURL yourself when needed.',
+      false, {
+        id: 'ember-simple-auth-auth0.authenticators.auth0-base.invalidate',
+        until: 'v3.0.0',
+      });
+
+    get(this, 'auth0').navigateToLogoutURL();
+    return this._super(...arguments);
+  },
 });

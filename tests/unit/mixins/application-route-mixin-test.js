@@ -42,7 +42,6 @@ test('it sets the correct expiration time if the exp is on idTokenPayload block'
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 10);
@@ -59,7 +58,6 @@ test('it sets the correct expiration time if the exp is on the authenticated blo
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 10);
@@ -78,37 +76,35 @@ test('it does not set the exp time if the user is not authenticated', function(a
         },
       },
     },
-    hasImpersonationData: true,
   });
 
   assert.equal(get(subject, '_expiresAt'), 0);
 });
 
-test('it calls the auth0-impersonation authenticator if we have impersonation data', function(assert) {
+test('it calls the auth0-url-hash authenticator if we have url hash data', function(assert) {
   assert.expect(2);
   const subject = this.subject({
     session: {
       authenticate: this.stub().returns(RSVP.resolve())
     },
-    _impersonationData: {
+    _getUrlHashData: this.stub().returns(RSVP.resolve({
       idToken: 1
-    },
-    hasImpersonationData: true,
+    })),
   });
 
   run(() => subject.beforeModel());
 
   assert.ok(subject.session.authenticate.calledOnce);
-  assert.ok(subject.session.authenticate.calledWith('authenticator:auth0-impersonation', { idToken: 1 }));
+  assert.ok(subject.session.authenticate.calledWith('authenticator:auth0-url-hash', { idToken: 1 }));
 });
 
-test('it does not call the auth0-impersonation authenticator if we do not have impersonation data', function(assert) {
+test('it does not call the auth0-url-hash authenticator if we do not have url hash data', function(assert) {
   assert.expect(1);
   const subject = this.subject({
     session: {
       authenticate: this.stub().returns(RSVP.resolve())
     },
-    hasImpersonationData: false,
+    _getUrlHashData: this.stub().returns(RSVP.resolve()),
   });
 
   run(() => subject.beforeModel());

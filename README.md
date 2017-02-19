@@ -30,7 +30,7 @@ If you don't already have an account, go signup at for free: [Auth0](https://aut
 
 **In your `config/environment.js` file, you must provide the following properties**
 
-1. (REQUIRED) - _clientID_ - Grab from your[Auth0 Dashboard](https://manage.auth0.com/#/clients)
+1. (REQUIRED) - _clientID_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 2. (REQUIRED) - _domain_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 3. (OPTIONAL) - _logoutURL_ - This can be overridden if you have a different logout callback than the login page. This will be used as the redirectURL passed to auth0 upon logging out.
 The logoutURL that is actually gets used is constructed as follows:
@@ -142,7 +142,7 @@ __The new session object will include the following fields__
 ```json
 {
   "authenticated": {
-    "authenticator": "authenticator:auth0-impersonation",
+    "authenticator": "authenticator:auth0-url-hash",
     ...
     "profile": {
       "impersonated": true,
@@ -233,6 +233,61 @@ export default Controller.extend({
 {{/if}}
 ```
 
+# Passwordless 
+
+__In order to perform passwordless login you need to use *authenticator:auth0-lock-passwordless* and pass in one of the valid passwordless types.__
+
+### Passwordless Types
+
+* sms
+* emailcode
+* magiclink
+
+### Customization
+
+To see a list of options that can be used with the passwordless authenticator please see [auth0-lock-passwordless repo](https://github.com/auth0/lock-passwordless#customization)
+
+## Example
+
+```js
+// app/controllers/application.js
+
+import Ember from 'ember';
+
+const {
+  Controller,
+  inject: {
+    service
+  },
+  get
+} = Ember;
+
+export default Controller.extend({
+  session: service(),
+  actions: {
+    login () {
+      // Check out the docs for all the options:
+      // https://github.com/auth0/lock-passwordless#customization
+      const lockOptions = {
+       authParams: {
+         scope: 'openid user_metadata'
+       }
+      };
+      
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', 'magiclink', lockOptions, (err, email) => {
+        console.log(`Email link sent to ${email}!`)
+      });
+    },
+
+    logout () {
+      get(this, 'session').invalidate();
+    }
+  }
+});
+```
+
+__Note that you can pass in a callback as the last argument. This proxies the lock-passwordless callback call so that the developer can then handle events after a passwordless link has been sent__
+
 # Acceptance Testing
 
 If you want to acceptance test the auth0 lock there are two things you can do. 
@@ -280,6 +335,8 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
   });
 });
 ```
+
+TODO: Show how to handle errors
 
 # Contributing
 

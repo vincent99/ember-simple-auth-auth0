@@ -1,8 +1,8 @@
 (function() {
-  /* globals define, Auth0Lock */
+  /* global define */
   define('auth0-lock', [], function() {
     'use strict';
 
-    return { default: Auth0Lock };
+    return { default: window.Auth0Lock };
   });
 })();

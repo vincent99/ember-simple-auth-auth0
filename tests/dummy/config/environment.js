@@ -52,8 +52,9 @@ module.exports = function(environment) {
     routeAfterAuthentication: 'protected',
     routeIfAlreadyAuthenticated: 'protected',
     auth0: {
-      clientID: process.env.AUTH0_CLIENT_ID,
-      domain: process.env.AUTH0_DOMAIN
+      clientID: '7CAwfka4fAh6YCLdtz8MZ5yAq5gQ1k7t',
+      domain: 'ember-demo.auth0.com',
+      logoutReturnToURL: 'http://localhost:4200/login',
     }
   };
 
