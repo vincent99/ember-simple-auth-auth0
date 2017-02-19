@@ -16,8 +16,6 @@ const {
   },
   run,
   testing,
-  deprecate,
-  isPresent,
   isEmpty,
 } = Ember;
 
@@ -51,8 +49,7 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   sessionInvalidated() {
     this._clearJobs();
-    // TODO: maybe don't do this or make it an option in the config
-    get(this, 'auth0').navigateToLogoutURL();
+    return this._super(...arguments);
   },
 
   beforeModel() {
@@ -147,36 +144,15 @@ export default Mixin.create(ApplicationRouteMixin, {
         return exp;
       }
 
-      const deprecatedExp = getWithDefault(this, 'session.data.authenticated.exp', null);
-      const newExp = getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', null);
+      const foo = getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', exp);
 
-      if (isPresent(deprecatedExp)) {
-        exp = deprecatedExp;
-
-        deprecate(
-          'Should use "idTokenPayload.exp" as the key for the expiration time instead of "exp" key on the session data',
-          false,
-          {
-            id: 'ember-simple-auth-auth0.application-route-mixin._expiresAt',
-            until: 'v3.0.0',
-          });
-      } else {
-        exp = newExp;
-      }
-
-      return exp;
+      return getWithDefault(this, 'session.data.authenticated.expiresIn', foo);
     }
   }),
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      let expiration = get(this, '_expiresAt') - (Date.now() / 1000);
-
-      if (expiration < 0) {
-        return 0;
-      }
-
-      return expiration;
+      return getWithDefault(this, '_expiresAt', 0);
     }
   }),
 

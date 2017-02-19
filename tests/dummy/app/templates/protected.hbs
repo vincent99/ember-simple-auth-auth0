@@ -8,14 +8,19 @@
   {{/if}}
 </h3>
 <div>
-  Token expires on {{moment-calendar (unix session.data.authenticated.idTokenPayload.exp)}} {{moment-from-now (unix session.data.authenticated.idTokenPayload.exp)}}
+  Token expires {{moment-calendar expiresIn}} {{moment-from-now expiresIn}}
 </div>
 <a href="#" {{action "logout"}}>
   {{#if session.data.authenticated.profile.impersonated}}
     Stop Impersonating
   {{else}}
-    Logout
+    Logout of Ember Simple Auth
   {{/if}}
 </a>
+<br/>
+<a href="#" {{action "logoutOfAuth0"}}>
+  Logout of Auth0 Session
+</a>
+
 <h2>Example of protected route that requires the user to be authenticated.</h2>
 <h3>Secret code is 12345</h3>
