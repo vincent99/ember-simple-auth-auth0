@@ -80,15 +80,17 @@ export default Service.extend({
 
   logoutURL: computed({
     get() {
+      const logoutReturnToURL = get(this, 'config.logoutReturnToURL');
+
       deprecate(
         "logoutURL is being deprecated please set ENV['ember-simple-auth].auth0.logoutReturnToURL",
-        false, {
+        isPresent(logoutReturnToURL), {
           id: 'ember-simple-auth-auth0.services.auth0',
           until: 'v3.0.0',
         });
 
-      if (isPresent(get(this, 'config.logoutReturnToURL'))) {
-        return get(this, 'config.logoutReturnToURL');
+      if (isPresent(logoutReturnToURL)) {
+        return logoutReturnToURL;
       }
 
       const loginURI = get(this, '_loginURI');
