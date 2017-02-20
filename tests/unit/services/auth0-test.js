@@ -59,6 +59,28 @@ moduleFor('service:auth0', 'Unit | Service | auth0', {
   }
 });
 
+test('it calculates isGreaterThanVersion8 when less than 8', function(assert) {
+  assert.expect(1);
+  const subject = this.subject({
+    _auth0: {
+      version: '7.0.0'
+    }
+  });
+
+  assert.notOk(get(subject, 'isGreaterThanVersion8'));
+});
+
+test('it calculates isGreaterThanVersion8 when greater than 8', function(assert) {
+  assert.expect(1);
+  const subject = this.subject({
+    _auth0: {
+      version: '8.0.1'
+    }
+  });
+
+  assert.ok(get(subject, 'isGreaterThanVersion8'));
+});
+
 test('it calculates the logoutURL correctly giving logoutReturnToURL precedence', function(assert) {
   const config = this.registerConfig({
     ['ember-simple-auth']: {
