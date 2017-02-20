@@ -16,7 +16,7 @@ const {
 export default Controller.extend({
   session: service(),
   auth0: service(),
-  myModel: alias('model'),
+  posts: alias('model'),
   expiresIn: computed('session.data.authenticated', function() {
     const foo = get(this, 'session.data.authenticated.idTokenPayload.exp');
     if (foo) {

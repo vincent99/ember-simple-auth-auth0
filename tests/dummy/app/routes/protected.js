@@ -6,4 +6,7 @@ const {
 } = Ember;
 
 export default Route.extend(AuthenticatedRouteMixin, {
+  model() {
+    return this.store.findAll('post');
+  }
 });
