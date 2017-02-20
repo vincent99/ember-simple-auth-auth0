@@ -1,10 +1,9 @@
-/* global semver */
-
 import Ember from 'ember';
 import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
+import semver from '../utils/semver';
 
 const {
   Service,
@@ -64,7 +63,7 @@ export default Service.extend({
   domain: readOnly('config.domain'),
 
   isGreaterThanVersion8: computed(function() {
-    const isGreaterThanVersion8 = semver.satisfies(Auth0.version, '>=8');
+    const isGreaterThanVersion8 = semver(get(this, '_auth0.version'), '8.0.0') > 0;
 
     deprecate(
       'Please use the new version of auth0; version >= 8.x.x',
@@ -143,14 +142,14 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    return new Auth0Lock(clientID, domain, options);
+    return new get(this, '_auth0Lock')(clientID, domain, options);
   },
 
   getAuth0Instance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    let Auth0Constructor = Auth0;
+    let Auth0Constructor = get(this, '_auth0');
 
     if (get(this, 'isGreaterThanVersion8')) {
       Auth0Constructor = Auth0.WebAuth;
@@ -166,7 +165,7 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    return new Auth0LockPasswordless(clientID, domain);
+    return new get(this, '_auth0LockPasswordless')(clientID, domain);
   },
 
   navigateToLogoutURL() {
@@ -185,6 +184,18 @@ export default Service.extend({
   logout() {
     get(this, 'session').invalidate().then(this.navigateToLogoutURL.bind(this));
   },
+
+  _auth0: computed(function() {
+    return Auth0;
+  }),
+
+  _auth0Lock: computed(function() {
+    return Auth0Lock;
+  }),
+
+  _auth0LockPasswordless: computed(function() {
+    return Auth0LockPasswordless;
+  }),
 
   _environmentConfig: computed({
     get() {
