@@ -6,7 +6,7 @@ const jwksRsa = require('jwks-rsa');
 require('dotenv').config();
 
 if (!process.env.AUTH0_DOMAIN || !process.env.AUTH0_AUDIENCE) {
-  throw 'Make sure you have AUTH0_DOMAIN, and AUTH0_AUDIENCE in your .env file'
+  console.error('Make sure you have AUTH0_DOMAIN, and AUTH0_AUDIENCE in your .env file');
 }
 
 module.exports = function(app) {
@@ -26,7 +26,7 @@ module.exports = function(app) {
 
   const audience = process.env.AUTH0_AUDIENCE;
   const domain = process.env.AUTH0_DOMAIN;
-  
+
   const jwtMiddleware = expressJWT({
     issuer: `https://${domain}/`,
     audience,
