@@ -336,7 +336,15 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 });
 ```
 
-TODO: Show how to handle errors
+## Handling errors
+
+__Errors come back as a hash in the url. These will be automatically parsed and ember will transition to the error route with two variables set on the model. error and errorDescription__
+
+See [template](./tests/dummy/app/templates/application-error.hbs) for an example
+
+## Calling an API
+
+See [server](./server) for an example of an express application getting called by the ember app.
 
 # Contributing
 
