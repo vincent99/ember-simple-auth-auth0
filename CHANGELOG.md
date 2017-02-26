@@ -3,6 +3,14 @@ Changelog
 
 ## v3.0.0 (February 25th, 2017)
 
+## Breaking Changes
+
+- The addon no longer navigates to the auth0 logout url when the session is invalidated through ember-simple-auth session. You have to manually call session.navigateToLogoutURL()
+- Use idToken instead of jwt on the authenticated object when making requests to the backend.
+- Use idTokenPayload.exp instead of exp to figure out when the token is about to expire
+- USe logoutReturnToURL instead of logoutURL in the environment config. This will be used when calling navigateToLogoutURL()
+- Remove redirectURI from the environment config.
+
 ### Pull Requests
 
 - [#46](https://github.com/seawatts/ember-simple-auth-auth0/pull/46) **enhacenement**: Add yarn  *by [Chris Watts](https://github.com/seawatts/feature)*
