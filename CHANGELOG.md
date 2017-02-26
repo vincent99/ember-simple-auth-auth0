@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## v3.0.0 (February 25th, 2017)
+
+### Pull Requests
+
+- [#46](https://github.com/seawatts/ember-simple-auth-auth0/pull/46) **enhacenement**: Add yarn  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#52](https://github.com/seawatts/ember-simple-auth-auth0/pull/52) **enhancement**: Remove deprecations  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#54](https://github.com/seawatts/ember-simple-auth-auth0/pull/54) **enhancement**: Add api demo  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#55](https://github.com/seawatts/ember-simple-auth-auth0/pull/55) **fix**: Semver dependency  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#58](https://github.com/seawatts/ember-simple-auth-auth0/pull/58) **docs**: Update readme with examples  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#57](https://github.com/seawatts/ember-simple-auth-auth0/pull/57) **fix**: correct Lock object init/fn call order of operations  *by [James Martinez](https://github.com/jmar910)*
+
 ## v2.3.0 (February 18th, 2017) 
 
 ### Pull Requests
