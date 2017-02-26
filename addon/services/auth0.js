@@ -141,8 +141,9 @@ export default Service.extend({
   getAuth0LockInstance(options, clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
+    const Auth0LockConstructor = get(this, '_auth0Lock');
 
-    return new get(this, '_auth0Lock')(clientID, domain, options);
+    return new Auth0LockConstructor(clientID, domain, options);
   },
 
   getAuth0Instance(clientID = null, domain = null) {
@@ -164,8 +165,9 @@ export default Service.extend({
   getAuth0LockPasswordlessInstance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
+    const Auth0LockPasswordlessConstructor = get(this, '_auth0LockPasswordless');
 
-    return new get(this, '_auth0LockPasswordless')(clientID, domain);
+    return new Auth0LockPasswordlessConstructor(clientID, domain);
   },
 
   navigateToLogoutURL() {
