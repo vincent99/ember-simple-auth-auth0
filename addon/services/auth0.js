@@ -1,10 +1,10 @@
-/* global semver */
-
 import Ember from 'ember';
 import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
+import semver from '../utils/semver';
+
 const {
   Service,
   computed,
@@ -17,12 +17,10 @@ const {
   getProperties,
   assert,
   testing,
-  isPresent,
   isEmpty,
   inject: {
     service
   },
-  typeOf,
   RSVP,
 } = Ember;
 
@@ -44,7 +42,7 @@ export default Service.extend({
    */
   config: computed({
     get() {
-      const emberSimpleAuthConfig = get(this, '_emberSimpleAuthConfig');
+      const emberSimpleAuthConfig = get(this, '_environmentConfig')['ember-simple-auth'];
       assert('ember-simple-auth config must be defined', emberSimpleAuthConfig);
       assert('ember-simple-auth.auth0 config must be defined', emberSimpleAuthConfig.auth0);
 
@@ -65,7 +63,7 @@ export default Service.extend({
   domain: readOnly('config.domain'),
 
   isGreaterThanVersion8: computed(function() {
-    const isGreaterThanVersion8 = semver.satisfies(Auth0.version, '>=8');
+    const isGreaterThanVersion8 = semver(get(this, '_auth0.version'), '8.0.0') > 0;
 
     deprecate(
       'Please use the new version of auth0; version >= 8.x.x',
@@ -78,31 +76,7 @@ export default Service.extend({
     return isGreaterThanVersion8;
   }),
 
-  logoutURL: computed({
-    get() {
-      const logoutReturnToURL = get(this, 'config.logoutReturnToURL');
-
-      deprecate(
-        "logoutURL is being deprecated please set ENV['ember-simple-auth].auth0.logoutReturnToURL",
-        isPresent(logoutReturnToURL), {
-          id: 'ember-simple-auth-auth0.services.auth0',
-          until: 'v3.0.0',
-        });
-
-      if (isPresent(logoutReturnToURL)) {
-        return logoutReturnToURL;
-      }
-
-      const loginURI = get(this, '_loginURI');
-      let location = `${window.location.protocol}//${window.location.host}`;
-
-      if (isPresent(loginURI)) {
-        location += `/${loginURI}`;
-      }
-
-      return location;
-    }
-  }),
+  logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
   showLock(options, clientID = null, domain = null) {
     let defaultOptions = {
@@ -147,6 +121,8 @@ export default Service.extend({
   _setupLock(lock, resolve, reject) {
     lock.on('unrecoverable_error', reject);
     lock.on('authorization_error', reject);
+
+    // lock.on('hash_parsed', resolve);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
         return reject(new Error('The authenticated data did not come back from the request'));
@@ -165,15 +141,16 @@ export default Service.extend({
   getAuth0LockInstance(options, clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
+    const Auth0LockConstructor = get(this, '_auth0Lock');
 
-    return new Auth0Lock(clientID, domain, options);
+    return new Auth0LockConstructor(clientID, domain, options);
   },
 
   getAuth0Instance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    let Auth0Constructor = Auth0;
+    let Auth0Constructor = get(this, '_auth0');
 
     if (get(this, 'isGreaterThanVersion8')) {
       Auth0Constructor = Auth0.WebAuth;
@@ -188,85 +165,43 @@ export default Service.extend({
   getAuth0LockPasswordlessInstance(clientID = null, domain = null) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
+    const Auth0LockPasswordlessConstructor = get(this, '_auth0LockPasswordless');
 
-    return new Auth0LockPasswordless(clientID, domain);
+    return new Auth0LockPasswordlessConstructor(clientID, domain);
   },
 
   navigateToLogoutURL() {
     const {
       domain,
-      logoutURL,
+      logoutReturnToURL,
       clientID
-    } = getProperties(this, 'domain', 'logoutURL', 'clientID');
+    } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
 
+    // TODO: deprecate and use logout
     if (!testing) {
-      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutURL}&client_id=${clientID}`);
+      window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
   },
+
+  logout() {
+    get(this, 'session').invalidate().then(this.navigateToLogoutURL.bind(this));
+  },
+
+  _auth0: computed(function() {
+    return Auth0;
+  }),
+
+  _auth0Lock: computed(function() {
+    return Auth0Lock;
+  }),
+
+  _auth0LockPasswordless: computed(function() {
+    return Auth0LockPasswordless;
+  }),
 
   _environmentConfig: computed({
     get() {
       return getOwner(this).resolveRegistration('config:environment');
     }
   }),
-
-  _emberSimpleAuthConfig: computed({
-    get() {
-      return get(this, '_environmentConfig')['ember-simple-auth'];
-    }
-  }),
-
-  _loginURI: computed({
-    get() {
-      const {
-        _redirectURI,
-        _rootURL,
-        _authenticationRoute,
-      } = getProperties(this, '_redirectURI', '_rootURL', '_authenticationRoute');
-
-      let loginURI = _rootURL;
-
-      if (isPresent(_authenticationRoute)) {
-        loginURI += `/${_authenticationRoute}`;
-      }
-
-      if (isPresent(_redirectURI)) {
-        loginURI = _redirectURI;
-      }
-
-      // Strip all leading / (slash) because we will add it back in during the logoutURL creation
-      if (isPresent(loginURI) && typeOf(loginURI) === 'string') {
-        return loginURI.replace(/(^[/\s]+)/g, '');
-      }
-
-      return '';
-    }
-  }),
-  _redirectURI: computed({
-    get() {
-      let redirectURI = get(this, 'config.redirectURI');
-      deprecate(
-        "ENV['ember-simple-auth'].auth0.redirectURI is being deprecated. Please use ENV['ember-simple-auth'].auth0.logoutReturnToURL",
-        isEmpty(redirectURI), {
-          id: 'ember-simple-auth-auth0.services.auth0',
-          until: 'v3.0.0',
-        });
-
-      return redirectURI || get(this, 'config.logoutReturnToURL') || '';
-    }
-  }),
-  _rootURL: computed({
-    get() {
-      const rootURL = get(this, '_environmentConfig.rootURL');
-      if (isPresent(rootURL)) {
-        return rootURL;
-      }
-
-      // NOTE: this is for backwards compatibility for those who are not yet using rootURL
-      return get(this, '_baseURL');
-    }
-  }),
-
-  _baseURL: readOnly('_environmentConfig.baseURL'),
-  _authenticationRoute: readOnly('_emberSimpleAuthConfig.authenticationRoute'),
 });

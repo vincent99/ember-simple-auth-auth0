@@ -1,6 +1,6 @@
 {
   "name": "ember-simple-auth-auth0",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "ember-simple-auth addon for Auth0 + Lock.js.",
   "directories": {
     "doc": "doc",
@@ -46,7 +46,12 @@
     "ember-sinon": "^0.6.0",
     "ember-sinon-qunit": "^1.4.0",
     "eslint-plugin-ember": "^2.2.0",
-    "loader.js": "^4.0.10"
+    "express": "^4.14.1",
+    "express-jwt": "^5.1.0",
+    "jsonwebtoken": "^7.3.0",
+    "jwks-rsa": "^1.1.1",
+    "loader.js": "^4.0.10",
+    "morgan": "^1.8.1"
   },
   "keywords": [
     "ember-addon",

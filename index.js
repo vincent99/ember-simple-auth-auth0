@@ -12,7 +12,6 @@ module.exports = {
     app.import(app.bowerDirectory + '/auth0-lock/build/lock.js');
     app.import(app.bowerDirectory + '/auth0-lock-passwordless/build/lock-passwordless.js');
     app.import(app.bowerDirectory + '/auth0.js/build/auth0.js');
-    app.import(app.bowerDirectory + '/semver/semver.browser.js');
 
     app.import('vendor/lock.js', {
       exports: {

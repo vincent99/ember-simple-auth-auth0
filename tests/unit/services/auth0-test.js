@@ -38,7 +38,6 @@ moduleFor('service:auth0', 'Unit | Service | auth0', {
     const defaultConfig = {
       rootURL: '/test',
       ['ember-simple-auth']: {
-        authenticationRoute: 'login',
         auth0: {}
       }
     };
@@ -60,55 +59,31 @@ moduleFor('service:auth0', 'Unit | Service | auth0', {
   }
 });
 
-test('it calculates the logoutURL correctly with rootURL', function(assert) {
-  const config = this.registerConfig();
-
-  let service = this.subject();
-  assert.equal(get(service, 'logoutURL'),
-    `${this.windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
-});
-
-test('it calculates the logoutURL correctly with baseURL', function(assert) {
-  const config = this.registerConfig({
-    rootURL: null,
-    baseURL: '/test'
-  });
-
-  let service = this.subject();
-  assert.equal(get(service, 'logoutURL'),
-    `${this.windowLocation()}${config.baseURL}/${config['ember-simple-auth'].authenticationRoute}`);
-});
-
-test('it calculates the logoutURL correctly giving rootURL precedence', function(assert) {
-  const config = this.registerConfig({
-    rootURL: '/testroot',
-    baseURL: '/test'
-  });
-
-  let service = this.subject();
-  assert.equal(get(service, 'logoutURL'),
-    `${this.windowLocation()}${config.rootURL}/${config['ember-simple-auth'].authenticationRoute}`);
-});
-
-test('it calculates the logoutURL correctly giving redirectURI precedence', function(assert) {
-  const config = this.registerConfig({
-    ['ember-simple-auth']: {
-      authenticationRoute: 'login',
-      auth0: {
-        redirectURI: 'my-login'
-      }
+test('it calculates isGreaterThanVersion8 when less than 8', function(assert) {
+  assert.expect(1);
+  const subject = this.subject({
+    _auth0: {
+      version: '7.0.0'
     }
   });
 
-  let service = this.subject();
-  assert.equal(get(service, 'logoutURL'),
-    `${this.windowLocation()}/${config['ember-simple-auth'].auth0.redirectURI}`);
+  assert.notOk(get(subject, 'isGreaterThanVersion8'));
+});
+
+test('it calculates isGreaterThanVersion8 when greater than 8', function(assert) {
+  assert.expect(1);
+  const subject = this.subject({
+    _auth0: {
+      version: '8.0.1'
+    }
+  });
+
+  assert.ok(get(subject, 'isGreaterThanVersion8'));
 });
 
 test('it calculates the logoutURL correctly giving logoutReturnToURL precedence', function(assert) {
   const config = this.registerConfig({
     ['ember-simple-auth']: {
-      authenticationRoute: 'login',
       auth0: {
         logoutReturnToURL: `${this.windowLocation()}/my-login`
       }
@@ -116,7 +91,7 @@ test('it calculates the logoutURL correctly giving logoutReturnToURL precedence'
   });
 
   let service = this.subject();
-  assert.equal(get(service, 'logoutURL'),
+  assert.equal(get(service, 'logoutReturnToURL'),
     config['ember-simple-auth'].auth0.logoutReturnToURL);
 });
 

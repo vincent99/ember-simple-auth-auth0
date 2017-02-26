@@ -336,7 +336,86 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 });
 ```
 
-TODO: Show how to handle errors
+## Handling errors
+
+__Errors come back as a hash in the url. These will be automatically parsed and ember will transition to the error route with two variables set on the model. error and errorDescription__
+
+`ember g template application-error`
+
+```hbs
+// app/templates/application-error.hbs
+
+Encountered an error from auth0 - {{model.error}} -- {{model.errorDescription}}
+```
+
+## Calling an API
+
+See [server](./server) for an example of an express application getting called by the ember app.
+
+If you are using [ember-data](https://github.com/emberjs/data)
+
+`ember g adapter application`
+
+```js
+import Ember from 'ember';
+import DS from 'ember-data';
+import DataAdapterMixin from 'ember-simple-auth/mixins/data-adapter-mixin';
+
+const {
+  computed
+} = Ember;
+
+const {
+  JSONAPIAdapter
+} = DS;
+
+export default JSONAPIAdapter.extend(DataAdapterMixin, {
+  authorizer: 'authorizer:jwt',
+});
+
+```
+
+```js
+// app/routes/application.js
+
+import Ember from 'ember';
+import ApplicationRouteMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
+
+const {
+  Route,
+  RSVP
+} = Ember;
+
+export default Route.extend(ApplicationRouteMixin, {
+  model() {
+    return this.store.findAll('my-model');
+  }
+});
+```
+
+This will make the following request
+
+```js
+GET
+http://localhost:4200/my-model
+
+Accept: application/vdn+json-api
+Authorization: Bearer 123.123123.1231
+```
+
+To make an API request without ember-data, add the user's [JWT token](/jwt) to an `Authorization` HTTP header:
+
+```js
+fetch('/api/foo', {
+  method: 'GET',
+  cache: false,
+  headers: {
+    'Authorization': 'Bearer <%= "${session.data.authenticated.jwt}" %>'
+  }
+}).then(function (response) {
+  // use response
+});
+```
 
 # Contributing
 
