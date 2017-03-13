@@ -21,6 +21,21 @@ let defaultOptions = {
 };
 ```
 
+Now you will have to pass them in manually if you want the same behavior: 
+
+```js
+let lockOptions = {
+  autoclose: true,
+  auth: {
+    redirect: false,
+    params: {
+      scope: 'openid'
+    },
+  }
+};
+      
+get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
+```
 ### Pull Requests
 
 - [#66](https://github.com/seawatts/ember-simple-auth-auth0/pull/66) **chore**: Add deprecations *by [Chris Watts](https://github.com/seawatts)*
