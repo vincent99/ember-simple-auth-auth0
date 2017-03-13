@@ -1,6 +1,6 @@
 {
   "name": "ember-simple-auth-auth0",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "ember-simple-auth addon for Auth0 + Lock.js.",
   "directories": {
     "doc": "doc",
@@ -15,7 +15,7 @@
   "engines": {
     "node": ">= 0.12.0"
   },
-  "author": "",
+  "author": "seawatts",
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",

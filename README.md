@@ -18,13 +18,14 @@ Auth0's [lock](https://github.com/auth0/lock) widget, is a nice way to get a ful
 If you don't already have an account, go signup at for free: [Auth0](https://auth0.com/)
 
 1. Create a new app through your dashboard.
-1. Add `http://localhost:4200` to your Allowed Callback URLs through your dashboard
-1. Done!
+2. Add `http://localhost:4200` to your Allowed Callback URLs through your dashboard
+3. Done!
+
+__If you are using Auth0.js > 8.x.x make sure to use JsonWebToken Signature Algorithm RS256 in your `Clients` settings under the `Advanced Settings -> OAuth` tab. 
 
 ## Installation
 
 **Install this addon with ember-cli** `ember install ember-simple-auth-auth0`
-
 
 ## Global Configuration
 
@@ -32,13 +33,9 @@ If you don't already have an account, go signup at for free: [Auth0](https://aut
 
 1. (REQUIRED) - _clientID_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 2. (REQUIRED) - _domain_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
-3. (OPTIONAL) - _logoutURL_ - This can be overridden if you have a different logout callback than the login page. This will be used as the redirectURL passed to auth0 upon logging out.
+3. (OPTIONAL) - _logoutReturnToURL_ - This can be overridden if you have a different logout callback than the login page.
 The logoutURL that is actually gets used is constructed as follows:
-* if you are using ember-cli < 2.8 it will prefix the logout url with `ENV.baseURL`, otherwise it will use `ENV.rootURL`
-* if `ember-simple-auth.auth0.logoutURL` is defined then it will use that, otherwise it will fallback to using `ember-simple-auth.authenticationRoute`
 
-> Example `${ENV.rootURL}/${ENV['ember-simple-auth].auth0.logoutURL`
-  
 ```js
 // config/environment.js
 module.exports = function(environment) {
@@ -48,7 +45,7 @@ module.exports = function(environment) {
       auth0: {
         clientID: '1234',
         domain: 'my-company.auth0.com',
-        logoutURL: '/logout',
+        logoutReturnToURL: '/logout',
       }
     }
   };
