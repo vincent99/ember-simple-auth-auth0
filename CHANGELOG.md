@@ -1,6 +1,30 @@
 Changelog
 =========
 
+## v3.0.1 (March 12th, 2017)
+
+## Added Deprecations
+
+- By default this addon would pass in the following block into the auth0 lock constructor. However, in 4.0.0 it will no longer do this, you will have to pass in the options yourself.
+
+The default options were as follows: 
+
+```js
+let defaultOptions = {
+  autoclose: true,
+  auth: {
+    redirect: false,
+    params: {
+      scope: 'openid'
+    },
+  }
+};
+```
+
+### Pull Requests
+
+- [#66](https://github.com/seawatts/ember-simple-auth-auth0/pull/66) **chore**: Add deprecations *by [Chris Watts](https://github.com/seawatts)*
+
 ## v3.0.0 (February 25th, 2017)
 
 ## Breaking Changes
@@ -13,11 +37,11 @@ Changelog
 
 ### Pull Requests
 
-- [#46](https://github.com/seawatts/ember-simple-auth-auth0/pull/46) **enhacenement**: Add yarn  *by [Chris Watts](https://github.com/seawatts/feature)*
-- [#52](https://github.com/seawatts/ember-simple-auth-auth0/pull/52) **enhancement**: Remove deprecations  *by [Chris Watts](https://github.com/seawatts/feature)*
-- [#54](https://github.com/seawatts/ember-simple-auth-auth0/pull/54) **enhancement**: Add api demo  *by [Chris Watts](https://github.com/seawatts/feature)*
-- [#55](https://github.com/seawatts/ember-simple-auth-auth0/pull/55) **fix**: Semver dependency  *by [Chris Watts](https://github.com/seawatts/feature)*
-- [#58](https://github.com/seawatts/ember-simple-auth-auth0/pull/58) **docs**: Update readme with examples  *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#46](https://github.com/seawatts/ember-simple-auth-auth0/pull/46) **enhacenement**: Add yarn  *by [Chris Watts](https://github.com/seawatts)*
+- [#52](https://github.com/seawatts/ember-simple-auth-auth0/pull/52) **enhancement**: Remove deprecations  *by [Chris Watts](https://github.com/seawatts)*
+- [#54](https://github.com/seawatts/ember-simple-auth-auth0/pull/54) **enhancement**: Add api demo  *by [Chris Watts](https://github.com/seawatts)*
+- [#55](https://github.com/seawatts/ember-simple-auth-auth0/pull/55) **fix**: Semver dependency  *by [Chris Watts](https://github.com/seawatts)*
+- [#58](https://github.com/seawatts/ember-simple-auth-auth0/pull/58) **docs**: Update readme with examples  *by [Chris Watts](https://github.com/seawatts)*
 - [#57](https://github.com/seawatts/ember-simple-auth-auth0/pull/57) **fix**: correct Lock object init/fn call order of operations  *by [James Martinez](https://github.com/jmar910)*
 
 ## v2.3.0 (February 18th, 2017) 
