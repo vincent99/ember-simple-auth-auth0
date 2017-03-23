@@ -15,6 +15,5 @@ module.exports = function(defaults) {
   */
 
   app.import(`${app.bowerDirectory}/auth0-lock/build/lock.js`);
-  app.import(`${app.bowerDirectory}/auth0.js/build/auth0.js`);
   return app.toTree();
 };

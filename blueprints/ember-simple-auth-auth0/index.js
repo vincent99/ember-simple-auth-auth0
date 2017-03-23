@@ -13,9 +13,6 @@ module.exports = {
           name: 'auth0-lock'
         },
         {
-          name: 'auth0.js'
-        },
-        {
           name: 'auth0-lock-passwordless'
         }
       ])
