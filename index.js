@@ -32,15 +32,9 @@ module.exports = {
   included: function(app) {
     this._super.included(app);
 
+    app.import('vendor/auth0-js.js'               , transformAMD('auth0'                  ));
     app.import('vendor/auth0-lock.js'             , transformAMD('auth0-lock'             ));
     app.import('vendor/auth0-lock-passwordless.js', transformAMD('auth0-lock-passwordless'));
-
-    app.import('vendor/auth0.js');
-    app.import('vendor/shims/auth0.js', {
-      exports: {
-        'auth0': ['default']
-      }
-    });
 
     // this.import('vendor/ember-simple-auth/register-version.js');
   },
@@ -51,14 +45,9 @@ module.exports = {
         trees.push(vendorTree);
       }
 
-      // [XA] import the auth libs into our vendor tree so the shim can find it.
-
-      trees.push(new Funnel(path.dirname(require.resolve('auth0-js/build/auth0.js')), {
-        files: ['auth0.js'],
-      }));
-
       // [XA] use webpack to transform the CommonJS libs to AMD so we can import 'em.
 
+      trees.push(webpackify('auth0-js'               , 'src'));
       trees.push(webpackify('auth0-lock'             , 'lib'));
       trees.push(webpackify('auth0-lock-passwordless', 'lib'));
 
