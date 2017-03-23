@@ -1,12 +1,10 @@
 /* jshint node: true */
 'use strict';
+
 const path = require('path');
 const Funnel = require('broccoli-funnel');
 const MergeTrees = require('broccoli-merge-trees');
 const Webpack = require('broccoli-webpack');
-// var writeFile = require('broccoli-file-creator');
-// var version = require('./package.json').version;
-// var version = require('./bower.json').dependencies['auth0.js'];
 
 function transformAMD(name) {
   return { using: [{ transformation: 'amd', as: name }] };
@@ -36,7 +34,7 @@ module.exports = {
     app.import('vendor/auth0-lock.js'             , transformAMD('auth0-lock'             ));
     app.import('vendor/auth0-lock-passwordless.js', transformAMD('auth0-lock-passwordless'));
 
-    // this.import('vendor/ember-simple-auth/register-version.js');
+    return app;
   },
 
   treeForVendor: function(vendorTree) {
@@ -52,11 +50,5 @@ module.exports = {
       trees.push(webpackify('auth0-lock-passwordless', 'lib'));
 
       return new MergeTrees(trees);
-
-  //   var emberSimpleAuthAuth0 = 'Ember.libraries.register(\'Ember Simple Auth Auth0\', \'' + version + '\');\n';
-  //   var auth0 = 'Ember.libraries.register(\'Auth0.js\', \'' + version + '\');\n';
-  //   var lock = 'Ember.libraries.register(\'Auth0 Lock\', \'' + version + '\');\n';
-  //   var passwordlessLock = 'Ember.libraries.register(\'Auth0 Lock Passwordless\', \'' + version + '\');\n';
-  //   return writeFile('ember-simple-auth/register-version.js', content);
   }
 };
