@@ -1,31 +1,39 @@
 /* jshint node: true */
 'use strict';
-var path = require('path');
-var Funnel = require('broccoli-funnel');
-var MergeTrees = require('broccoli-merge-trees');
+const path = require('path');
+const Funnel = require('broccoli-funnel');
+const MergeTrees = require('broccoli-merge-trees');
+const Webpack = require('broccoli-webpack');
 // var writeFile = require('broccoli-file-creator');
 // var version = require('./package.json').version;
 // var version = require('./bower.json').dependencies['auth0.js'];
+
+function transformAMD(name) {
+  return { using: [{ transformation: 'amd', as: name }] };
+}
+
+function webpackify(name, dir) {
+  const fun = new Funnel(path.dirname(require.resolve(name + '/' + dir + '/index.js'), {
+    destDir: name,
+    files: ['index.js']
+  }));
+  return new Webpack([fun], {
+    entry: [name + '/' + dir + '/index.js'],
+    output: {
+      filename: name + '.js',
+      library: name,
+      libraryTarget: 'umd'
+    }
+  });
+}
 
 module.exports = {
   name: 'ember-simple-auth-auth0',
   included: function(app) {
     this._super.included(app);
 
-    app.import(app.bowerDirectory + '/auth0-lock/build/lock.js');
-    app.import(app.bowerDirectory + '/auth0-lock-passwordless/build/lock-passwordless.js');
-
-    app.import('vendor/shims/lock.js', {
-      exports: {
-        'auth0-lock': ['default']
-      }
-    });
-
-    app.import('vendor/shims/lock-passwordless.js', {
-      exports: {
-        'auth0-lock-passwordless': ['default']
-      }
-    });
+    app.import('vendor/auth0-lock.js'             , transformAMD('auth0-lock'             ));
+    app.import('vendor/auth0-lock-passwordless.js', transformAMD('auth0-lock-passwordless'));
 
     app.import('vendor/auth0.js');
     app.import('vendor/shims/auth0.js', {
@@ -38,16 +46,21 @@ module.exports = {
   },
 
   treeForVendor: function(vendorTree) {
-      var trees = [];
+      const trees = [];
       if(vendorTree) {
         trees.push(vendorTree);
       }
 
-      // [XA] import the auth0 libs into our vendor tree so the shims can find them.
+      // [XA] import the auth libs into our vendor tree so the shim can find it.
 
       trees.push(new Funnel(path.dirname(require.resolve('auth0-js/build/auth0.js')), {
         files: ['auth0.js'],
       }));
+
+      // [XA] use webpack to transform the CommonJS libs to AMD so we can import 'em.
+
+      trees.push(webpackify('auth0-lock'             , 'lib'));
+      trees.push(webpackify('auth0-lock-passwordless', 'lib'));
 
       return new MergeTrees(trees);
 
