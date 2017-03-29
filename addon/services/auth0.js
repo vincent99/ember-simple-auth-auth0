@@ -29,7 +29,8 @@ const assign = Ember.assign || Ember.merge;
 const validPasswordlessTypes = [
   'sms',
   'magiclink',
-  'emailcode'
+  'emailcode',
+  'socialOrMagiclink'
 ];
 
 export default Service.extend({
