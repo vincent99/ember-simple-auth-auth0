@@ -13,7 +13,7 @@
   },
   "repository": "https://github.com/seawatts/ember-simple-auth-auth0",
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= ^4.0.0"
   },
   "author": "seawatts",
   "license": "MIT",
