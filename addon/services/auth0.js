@@ -29,7 +29,8 @@ const assign = Ember.assign || Ember.merge;
 const validPasswordlessTypes = [
   'sms',
   'magiclink',
-  'emailcode'
+  'emailcode',
+  'socialOrMagiclink'
 ];
 
 export default Service.extend({
@@ -63,29 +64,27 @@ export default Service.extend({
   domain: readOnly('config.domain'),
 
   isGreaterThanVersion8: computed(function() {
-    const isGreaterThanVersion8 = semver(get(this, '_auth0.version'), '8.0.0') > 0;
-
-    deprecate(
-      'Please use the new version of auth0; version >= 8.x.x',
-      isGreaterThanVersion8, {
-        id: 'ember-simple-auth-auth0',
-        until: 'v3.0.0',
-        url: 'https://auth0.com/docs/libraries/auth0js/migration-guide'
-      });
-
-    return isGreaterThanVersion8;
+    return semver(get(this, '_auth0.version'), '8.0.0') > 0;
   }),
 
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
   showLock(options, clientID = null, domain = null) {
+    deprecate(
+      'The current default options being passed into lock will no longer be passed in by default you will need to explicitly set them.',
+      false,
+      {
+        id: 'ember-simple-auth-auth0',
+        until: 'v4.0.0',
+      });
+
     let defaultOptions = {
       autoclose: true,
       auth: {
         redirect: false,
         params: {
           scope: 'openid'
-        }
+        },
       }
     };
 
@@ -106,7 +105,8 @@ export default Service.extend({
       auth: {
         params: {
           scope: 'openid'
-        }
+        },
+        audience: `${clientID}`
       }
     };
 
@@ -177,7 +177,6 @@ export default Service.extend({
       clientID
     } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
 
-    // TODO: deprecate and use logout
     if (!testing) {
       window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
