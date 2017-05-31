@@ -239,6 +239,7 @@ __In order to perform passwordless login you need to use *authenticator:auth0-lo
 * sms
 * emailcode
 * magiclink
+* socialOrMagiclink
 
 ### Customization
 
