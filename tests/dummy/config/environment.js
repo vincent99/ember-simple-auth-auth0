@@ -1,4 +1,4 @@
-/* jshint node: true */
+/* eslint-env node */
 require('dotenv').config();
 
 module.exports = function(environment) {
