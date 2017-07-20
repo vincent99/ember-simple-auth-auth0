@@ -1,7 +1,0 @@
-{
-  "name": "ember-simple-auth-auth0",
-  "dependencies": {
-    "ember": "~2.10.2",
-    "ember-cli-shims": "0.1.3"
-  }
-}
