@@ -21,7 +21,7 @@ If you don't already have an account, go signup at for free: [Auth0](https://aut
 2. Add `http://localhost:4200` to your Allowed Callback URLs through your dashboard
 3. Done!
 
-__If you are using Auth0.js > 8.x.x make sure to use JsonWebToken Signature Algorithm RS256 in your `Clients` settings under the `Advanced Settings -> OAuth` tab. 
+__If you are using Auth0.js > 8.x.x make sure to use JsonWebToken Signature Algorithm RS256 in your `Clients` settings under the `Advanced Settings -> OAuth` tab.
 
 ## Installation
 
@@ -41,7 +41,7 @@ The logoutURL that is actually gets used is constructed as follows:
 module.exports = function(environment) {
   let ENV = {
     'ember-simple-auth': {
-      authenticationRoute: 'login', 
+      authenticationRoute: 'login',
       auth0: {
         clientID: '1234',
         domain: 'my-company.auth0.com',
@@ -49,7 +49,7 @@ module.exports = function(environment) {
       }
     }
   };
-  
+
   return ENV;
 };
 ```
@@ -124,7 +124,7 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 
 __You can use this in your templates that have the session service injected.__
 
-```html 
+```html
 My logged in user email is {{session.data.authenticated.profile.email}}!
 ```
 
@@ -171,7 +171,7 @@ export default Route.extend(ApplicationRouteMixin, {
   beforeSessionExpired() {
     // Do async logic
     // Notify the user that they are about to be logged out.
-    
+
     return RSVP.resolve();
   }
 });
@@ -206,7 +206,7 @@ export default Controller.extend({
          }
        }
       };
-      
+
       get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
     },
 
@@ -230,7 +230,7 @@ export default Controller.extend({
 {{/if}}
 ```
 
-# Passwordless 
+# Passwordless
 
 __In order to perform passwordless login you need to use *authenticator:auth0-lock-passwordless* and pass in one of the valid passwordless types.__
 
@@ -271,7 +271,7 @@ export default Controller.extend({
          scope: 'openid user_metadata'
        }
       };
-      
+
       get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', 'magiclink', lockOptions, (err, email) => {
         console.log(`Email link sent to ${email}!`)
       });
@@ -288,11 +288,11 @@ __Note that you can pass in a callback as the last argument. This proxies the lo
 
 # Acceptance Testing
 
-If you want to acceptance test the auth0 lock there are two things you can do. 
+If you want to acceptance test the auth0 lock there are two things you can do.
 
 - If you are just using the default auth0-lock authenticator then all you have to do is authenticateSession.
 - If you are manually invoking the auth0 lock you should use the `showLock` function on the auth0 service and then call `mockAuth0Lock` in your test.
- 
+
 ```js
 // tests/acceptance/login.js
 
@@ -316,7 +316,7 @@ test('visiting /login redirects to /protected page if authenticated', function(a
     let idToken = get(session, 'data.authenticated.idToken');
     assert.equal(idToken, sessionData.idToken);
     assert.equal(currentURL(), '/protected');
-  }); 
+  });
 });
 
 test('it mocks the auth0 lock login and logs in the user', function(assert) {
@@ -327,7 +327,7 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 
   mockAuth0Lock(this.application, sessionData);
   visit('/login');
-  
+
   andThen(() => {
     assert.equal(currentURL(), '/protected');
   });
@@ -422,7 +422,6 @@ fetch('/api/foo', {
 * `git clone` this repository
 * `cd ember-simple-auth-auth0`
 * `npm install`
-* `bower install`
 
 ## Running
 
