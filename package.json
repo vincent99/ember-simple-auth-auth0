@@ -24,7 +24,7 @@
     "broccoli-webpack": "^1.0.0",
     "dotenv": "^4.0.0",
     "ember-ajax": "^3.0.0",
-    "ember-cli": "2.13.2",
+    "ember-cli": "~2.13.3",
     "ember-cli-app-version": "^3.0.0",
     "ember-cli-changelog": "seawatts/ember-cli-changelog#492d607",
     "ember-cli-commands": "1.0.0-beta.1",
