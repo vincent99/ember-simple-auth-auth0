@@ -11,7 +11,7 @@
     "start": "ember server",
     "test": "ember try:each"
   },
-  "repository": "https://github.com/seawatts/ember-simple-auth-auth0",
+  "repository": "https://github.com/auth0-community/ember-simple-auth-auth0",
   "engines": {
     "node": ">= 4.0.0"
   },
