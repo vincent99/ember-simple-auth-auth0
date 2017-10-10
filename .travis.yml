@@ -32,7 +32,6 @@ before_install:
   - bower --version
 
 install:
-  - yarn install --no-lockfile --ignore-engines
   - bower install
 
 script:
