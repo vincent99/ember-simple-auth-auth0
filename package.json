@@ -11,7 +11,7 @@
     "start": "ember server",
     "test": "ember try:each"
   },
-  "repository": "https://github.com/seawatts/ember-simple-auth-auth0",
+  "repository": "https://github.com/auth0-community/ember-simple-auth-auth0",
   "engines": {
     "node": ">= 4.0.0"
   },
@@ -24,7 +24,7 @@
     "broccoli-webpack": "^1.0.0",
     "dotenv": "^4.0.0",
     "ember-ajax": "^3.0.0",
-    "ember-cli": "2.13.2",
+    "ember-cli": "~2.13.3",
     "ember-cli-app-version": "^3.0.0",
     "ember-cli-changelog": "seawatts/ember-cli-changelog#492d607",
     "ember-cli-commands": "1.0.0-beta.1",
