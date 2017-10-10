@@ -1,11 +1,10 @@
 ---
-dist: trusty
-sudo: false
 language: node_js
 node_js:
   - "6"
 
 sudo: false
+dist: trusty
 
 cache:
   yarn: true
@@ -37,6 +36,7 @@ before_install:
   - bower --version
 
 install:
+  - yarn install --no-lockfile --non-interactive
   - bower install
 
 script:
