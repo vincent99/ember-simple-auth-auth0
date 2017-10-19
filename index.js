@@ -5,6 +5,8 @@ const path = require('path');
 const Funnel = require('broccoli-funnel');
 const MergeTrees = require('broccoli-merge-trees');
 const Webpack = require('broccoli-webpack');
+const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+const wp = require('webpack');
 
 function transformAMD(name) {
   return { using: [{ transformation: 'amd', as: name }] };
@@ -21,7 +23,12 @@ function webpackify(name, dir) {
       filename: name + '.js',
       library: name,
       libraryTarget: 'umd'
-    }
+    },
+    plugins: [
+      new wp.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(EmberAddon.env())
+      })
+    ]
   });
 }
 
