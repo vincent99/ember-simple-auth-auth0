@@ -28,7 +28,13 @@ function webpackify(name, dir) {
       new wp.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(EmberAddon.env())
       })
-    ]
+    ],
+    resolve: {
+      alias: {
+        'react'    : path.dirname(require.resolve('react')),
+        'react-dom': path.dirname(require.resolve('react-dom')),
+      }
+    }
   });
 }
 
