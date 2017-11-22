@@ -1,6 +1,5 @@
-/*jshint node:true*/
-/* global require, module */
-var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+/* eslint-env node */
+const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 module.exports = function(defaults) {
   var app = new EmberAddon(defaults, {
@@ -14,7 +13,5 @@ module.exports = function(defaults) {
     behave. You most likely want to be modifying `./index.js` or app's build file
   */
 
-  app.import(`${app.bowerDirectory}/auth0-lock/build/lock.js`);
-  app.import(`${app.bowerDirectory}/auth0.js/build/auth0.js`);
   return app.toTree();
 };

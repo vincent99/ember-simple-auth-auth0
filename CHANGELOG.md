@@ -1,13 +1,28 @@
 Changelog
 =========
 
+## v3.1.0 (November 22nd, 2017)
+
+## Auth0.js and Lock are now installed via NPM/Yarn
+
+- Auth0 dependencies are now installed via NPM/Yarn. No Bower Required™.
+- It is now safe to remove the `auth0-js`, `auth0-lock`, and `auth0-lock-passwordless` dependencies from `bower.json`.
+
+### Pull Requests
+
+- [#69](https://github.com/auth0-community/ember-simple-auth-auth0/pull/69)  Added 'socialOrMagiclink' support  *by [Robert Schaefer](https://github.com/roschaefer)*
+- [#71](https://github.com/auth0-community/ember-simple-auth-auth0/pull/71)  Upgrade Ember dependencies to v2.13 *by [Chris Watts](https://github.com/seawatts/feature)*
+- [#68](https://github.com/auth0-community/ember-simple-auth-auth0/pull/68)  Install Auth0 dependencies via NPM/Yarn  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+- [#81](https://github.com/auth0-community/ember-simple-auth-auth0/pull/81)  Fixed incompatible engine error on `yarn install`  *by [Robert Schaefer](https://github.com/roschaefer)*
+- [#87](https://github.com/auth0-community/ember-simple-auth-auth0/pull/87)  Use Headless Chrome for tests  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v3.0.1 (March 12th, 2017)
 
 ## Added Deprecations
 
 - By default this addon would pass in the following block into the auth0 lock constructor. However, in 4.0.0 it will no longer do this, you will have to pass in the options yourself.
 
-The default options were as follows: 
+The default options were as follows:
 
 ```js
 let defaultOptions = {
@@ -21,6 +36,21 @@ let defaultOptions = {
 };
 ```
 
+Now you will have to pass them in manually if you want the same behavior:
+
+```js
+let lockOptions = {
+  autoclose: true,
+  auth: {
+    redirect: false,
+    params: {
+      scope: 'openid'
+    },
+  }
+};
+
+get(this, 'session').authenticate('authenticator:auth0-lock', lockOptions);
+```
 ### Pull Requests
 
 - [#66](https://github.com/seawatts/ember-simple-auth-auth0/pull/66) **chore**: Add deprecations *by [Chris Watts](https://github.com/seawatts)*
@@ -44,7 +74,7 @@ let defaultOptions = {
 - [#58](https://github.com/seawatts/ember-simple-auth-auth0/pull/58) **docs**: Update readme with examples  *by [Chris Watts](https://github.com/seawatts)*
 - [#57](https://github.com/seawatts/ember-simple-auth-auth0/pull/57) **fix**: correct Lock object init/fn call order of operations  *by [James Martinez](https://github.com/jmar910)*
 
-## v2.3.0 (February 18th, 2017) 
+## v2.3.0 (February 18th, 2017)
 
 ### Pull Requests
 - [#42](https://github.com/seawatts/ember-simple-auth-auth0/pull/42) **enhancement**: Update ember-simple-auth v1.2.0  *by [Chris Watts](https://github.com/seawatts)*
