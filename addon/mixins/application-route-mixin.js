@@ -76,14 +76,6 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _getUrlHashData() {
-    if (get(this, 'auth0.isGreaterThanVersion8')) {
-      return this._getNewUrlHashData();
-    }
-
-    return this._getDeprecatedUrlHashData();
-  },
-
-  _getNewUrlHashData() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
     return new RSVP.Promise((resolve, reject) => {
       // TODO: Check to see if we cannot parse the hash or check to see which version of auth0 we are using.... ugh
@@ -101,21 +93,6 @@ export default Mixin.create(ApplicationRouteMixin, {
     });
   },
 
-  _getDeprecatedUrlHashData() {
-    return new RSVP.Promise((resolve, reject) => {
-
-      const auth0 = get(this, 'auth0').getAuth0Instance();
-      const parsedPayload = auth0.parseHash();
-
-      if (parsedPayload && parsedPayload.error && parsedPayload.error_description) {
-        parsedPayload.errorDescription = decodeURI(parsedPayload.error_description);
-        delete parsedPayload.error_description;
-        return reject(parsedPayload);
-      }
-
-      return resolve(parsedPayload);
-    });
-  },
   _setupFutureEvents() {
     // Don't schedule expired events during testing, otherwise acceptance tests will hang.
     if (testing) {
