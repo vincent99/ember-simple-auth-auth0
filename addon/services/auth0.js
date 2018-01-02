@@ -128,7 +128,7 @@ export default Service.extend({
         return reject(new Error('The authenticated data did not come back from the request'));
       }
 
-      lock.getProfile(authenticatedData.idToken, (error, profile) => {
+      lock.getUserInfo(authenticatedData.accessToken, (error, profile) => {
         if (error) {
           return reject(error);
         }
