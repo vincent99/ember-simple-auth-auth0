@@ -17,9 +17,9 @@ const assign = Ember.assign || Ember.merge;
 
 const StubLock = Ember.Object.extend(Evented, {
   profile: null,
-  shouldThrowGetProfileError: false,
-  getProfile(idToken, callback) {
-    if (get(this, 'shouldThrowGetProfileError')) {
+  shouldThrowGetUserInfoError: false,
+  getUserInfo(idToken, callback) {
+    if (get(this, 'shouldThrowGetUserInfoError')) {
       callback(new Error('failed to get profile'));
     } else {
       callback(null, get(this, 'profile'));
@@ -57,28 +57,6 @@ moduleFor('service:auth0', 'Unit | Service | auth0', {
       window.location.host,
     ].join('');
   }
-});
-
-test('it calculates isGreaterThanVersion8 when less than 8', function(assert) {
-  assert.expect(1);
-  const subject = this.subject({
-    _auth0: {
-      version: '7.0.0'
-    }
-  });
-
-  assert.notOk(get(subject, 'isGreaterThanVersion8'));
-});
-
-test('it calculates isGreaterThanVersion8 when greater than 8', function(assert) {
-  assert.expect(1);
-  const subject = this.subject({
-    _auth0: {
-      version: '8.0.1'
-    }
-  });
-
-  assert.ok(get(subject, 'isGreaterThanVersion8'));
 });
 
 test('it calculates the logoutURL correctly giving logoutReturnToURL precedence', function(assert) {
@@ -122,7 +100,7 @@ test('showPasswordlessLock assigns options', function(assert) {
   assert.ok(subject.getAuth0LockPasswordlessInstance().sms.calledWith(options));
 });
 
-test('showLock calls getProfile', function(assert) {
+test('showLock calls getUserInfo', function(assert) {
   assert.expect(1);
   const done = assert.async();
   const stubbedLock = new StubLock();
@@ -196,11 +174,11 @@ test('showLock rejects when authenticatedData does not exist', function(assert) 
   stubbedLock.trigger('authenticated');
 });
 
-test('showLock rejects when getProfile returns an error', function(assert) {
+test('showLock rejects when getUserInfo returns an error', function(assert) {
   assert.expect(1);
   const done = assert.async();
   const stubbedLock = new StubLock({
-    shouldThrowGetProfileError: true
+    shouldThrowGetUserInfoError: true
   });
 
   const subject = this.subject({

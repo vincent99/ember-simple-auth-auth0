@@ -6,4 +6,5 @@ const {
 } = Ember;
 
 export default Route.extend(ApplicationRouteMixin, {
+  routeAfterAuthentication: 'protected'
 });

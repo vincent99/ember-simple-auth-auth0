@@ -3,7 +3,6 @@ import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
-import semver from '../utils/semver';
 
 const {
   Service,
@@ -62,10 +61,6 @@ export default Service.extend({
    * @type {String}
    */
   domain: readOnly('config.domain'),
-
-  isGreaterThanVersion8: computed(function() {
-    return semver(get(this, '_auth0.version'), '8.0.0') > 0;
-  }),
 
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
@@ -128,7 +123,7 @@ export default Service.extend({
         return reject(new Error('The authenticated data did not come back from the request'));
       }
 
-      lock.getProfile(authenticatedData.idToken, (error, profile) => {
+      lock.getUserInfo(authenticatedData.accessToken, (error, profile) => {
         if (error) {
           return reject(error);
         }
@@ -150,11 +145,7 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    let Auth0Constructor = get(this, '_auth0');
-
-    if (get(this, 'isGreaterThanVersion8')) {
-      Auth0Constructor = Auth0.WebAuth;
-    }
+    const Auth0Constructor = get(this, '_auth0.WebAuth');
 
     return new Auth0Constructor({
       domain,

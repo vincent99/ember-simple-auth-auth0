@@ -20,14 +20,7 @@ export default Auth0BaseAuthenticator.extend({
         reject();
       }
       const auth0 = get(this, 'auth0').getAuth0Instance();
-      let getUserInfo = () => {};
-
-      // Handle auth0.js v8.x.x
-      if (get(this, 'auth0.isGreaterThanVersion8')) {
-        getUserInfo = auth0.client.userInfo.bind(auth0.client);
-      } else {
-        getUserInfo = auth0.getUserInfo.bind(auth0);
-      }
+      const getUserInfo = auth0.client.userInfo.bind(auth0.client);
 
       getUserInfo(urlHashData.accessToken, (err, profile) => {
         if (err) {
