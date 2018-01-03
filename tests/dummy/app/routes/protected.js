@@ -7,6 +7,7 @@ const {
 } = Ember;
 
 export default Route.extend(AuthenticatedRouteMixin, {
+  authenticationRoute: 'login',
   model() {
     return this.store.findAll('post').catch((err) => {
       Logger.error(err);
