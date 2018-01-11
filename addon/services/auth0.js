@@ -10,7 +10,6 @@ const {
   computed: {
     readOnly,
   },
-  deprecate,
   get,
   getOwner,
   getProperties,
@@ -22,8 +21,6 @@ const {
   },
   RSVP,
 } = Ember;
-
-const assign = Ember.assign || Ember.merge;
 
 const validPasswordlessTypes = [
   'sms',
@@ -65,26 +62,6 @@ export default Service.extend({
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
   showLock(options, clientID = null, domain = null) {
-    deprecate(
-      'The current default options being passed into lock will no longer be passed in by default you will need to explicitly set them.',
-      false,
-      {
-        id: 'ember-simple-auth-auth0',
-        until: 'v4.0.0',
-      });
-
-    let defaultOptions = {
-      autoclose: true,
-      auth: {
-        redirect: false,
-        params: {
-          scope: 'openid'
-        },
-      }
-    };
-
-    options = assign(defaultOptions, options);
-
     return new RSVP.Promise((resolve, reject) => {
       const lock = this.getAuth0LockInstance(options, clientID, domain);
       this._setupLock(lock, resolve, reject);
@@ -95,17 +72,6 @@ export default Service.extend({
   showPasswordlessLock(type, options, clientID = null, domain = null) {
     assert(`You must pass in a valid type to auth0-lock-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
       validPasswordlessTypes.indexOf(type) > -1);
-
-    let defaultOptions = {
-      auth: {
-        params: {
-          scope: 'openid'
-        },
-        audience: `${clientID}`
-      }
-    };
-
-    options = assign(defaultOptions, options);
 
     return new RSVP.Promise((resolve) => {
       const lock = this.getAuth0LockPasswordlessInstance(clientID, domain);
