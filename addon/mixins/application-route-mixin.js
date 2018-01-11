@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import { Auth0Error } from '../utils/errors'
 
 const {
   Mixin,
@@ -81,11 +82,7 @@ export default Mixin.create(ApplicationRouteMixin, {
       // TODO: Check to see if we cannot parse the hash or check to see which version of auth0 we are using.... ugh
       auth0.parseHash((err, parsedPayload) => {
         if (err) {
-          if (err.errorDescription) {
-            err.errorDescription = decodeURI(err.errorDescription);
-          }
-
-          return reject(err);
+          return reject(new Auth0Error(err));
         }
 
         resolve(parsedPayload);

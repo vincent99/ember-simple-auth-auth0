@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Auth0BaseAuthenticator from 'ember-simple-auth-auth0/authenticators/auth0-base';
 import createSessionDataObject from '../utils/create-session-data-object';
+import { Auth0Error } from '../utils/errors'
 
 const {
   RSVP,
@@ -24,7 +25,7 @@ export default Auth0BaseAuthenticator.extend({
 
       getUserInfo(urlHashData.accessToken, (err, profile) => {
         if (err) {
-          return reject(err);
+          return reject(new Auth0Error(err));
         }
 
         resolve(createSessionDataObject(profile, urlHashData));

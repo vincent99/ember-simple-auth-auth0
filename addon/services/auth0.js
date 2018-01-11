@@ -3,6 +3,7 @@ import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
+import { Auth0Error } from '../utils/errors'
 
 const {
   Service,
@@ -86,12 +87,12 @@ export default Service.extend({
     // lock.on('hash_parsed', resolve);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
-        return reject(new Error('The authenticated data did not come back from the request'));
+        return reject(new Auth0Error('The authenticated data did not come back from the request'));
       }
 
       lock.getUserInfo(authenticatedData.accessToken, (error, profile) => {
         if (error) {
-          return reject(error);
+          return reject(new Auth0Error(error));
         }
 
         resolve(createSessionDataObject(profile, authenticatedData));
