@@ -73,13 +73,13 @@ export default Mixin.create(ApplicationRouteMixin, {
       return;
     }
 
-    return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData);
+    return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData)
+      .then(this._clearUrlHash.bind(this));
   },
 
   _getUrlHashData() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
     return new RSVP.Promise((resolve, reject) => {
-      // TODO: Check to see if we cannot parse the hash or check to see which version of auth0 we are using.... ugh
       auth0.parseHash((err, parsedPayload) => {
         if (err) {
           return reject(new Auth0Error(err));
@@ -88,6 +88,13 @@ export default Mixin.create(ApplicationRouteMixin, {
         resolve(parsedPayload);
       });
     });
+  },
+
+  _clearUrlHash() {
+    if(!testing && window.history) {
+      window.history.pushState('', document.title, window.location.pathname + window.location.search);
+    }
+    return RSVP.resolve()
   },
 
   _setupFutureEvents() {
