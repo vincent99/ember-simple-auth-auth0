@@ -31,18 +31,22 @@ moduleFor('mixin:application-route-mixin', 'Unit | Mixin | application route mix
 
 test('it sets the correct expiration time if the expiresIn exists', function(assert) {
   assert.expect(1);
+  const issuedAt = Math.ceil(Date.now() / 1000);
   const subject = this.subject({
     session: {
       isAuthenticated: true,
       data: {
         authenticated: {
           expiresIn: 10,
+          idTokenPayload: {
+            iat: issuedAt
+          }
         },
       },
     },
   });
 
-  assert.equal(get(subject, '_expiresAt'), 10);
+  assert.equal(get(subject, '_expiresAt'), issuedAt + 10);
 });
 
 test('it does not set the exp time if the user is not authenticated', function(assert) {

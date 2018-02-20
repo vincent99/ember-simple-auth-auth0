@@ -119,15 +119,14 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   _expiresAt: computed('session.data.authenticated', {
     get() {
-      let exp = 0;
-
       if (!get(this, 'session.isAuthenticated')) {
-        return exp;
+        return 0;
       }
 
-      const foo = getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', exp);
+      let expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
+      let issuedAt = getWithDefault(this, 'session.data.authenticated.idTokenPayload.iat', 0);
 
-      return getWithDefault(this, 'session.data.authenticated.expiresIn', foo);
+      return issuedAt + expiresIn;
     }
   }),
 
