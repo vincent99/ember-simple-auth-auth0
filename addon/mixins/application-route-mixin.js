@@ -132,7 +132,9 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      return getWithDefault(this, '_expiresAt', 0);
+      let remaining = getWithDefault(this, '_expiresAt', 0) - Math.ceil(Date.now() / 1000);
+
+      return remaining < 0 ? 0 : remaining;
     }
   }),
 
