@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
+import { Auth0Error } from '../utils/errors'
 
 const {
   Mixin,
@@ -72,28 +73,16 @@ export default Mixin.create(ApplicationRouteMixin, {
       return;
     }
 
-    return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData);
+    return get(this, 'session').authenticate('authenticator:auth0-url-hash', urlHashData)
+      .then(this._clearUrlHash.bind(this));
   },
 
   _getUrlHashData() {
-    if (get(this, 'auth0.isGreaterThanVersion8')) {
-      return this._getNewUrlHashData();
-    }
-
-    return this._getDeprecatedUrlHashData();
-  },
-
-  _getNewUrlHashData() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
     return new RSVP.Promise((resolve, reject) => {
-      // TODO: Check to see if we cannot parse the hash or check to see which version of auth0 we are using.... ugh
       auth0.parseHash((err, parsedPayload) => {
         if (err) {
-          if (err.errorDescription) {
-            err.errorDescription = decodeURI(err.errorDescription);
-          }
-
-          return reject(err);
+          return reject(new Auth0Error(err));
         }
 
         resolve(parsedPayload);
@@ -101,21 +90,13 @@ export default Mixin.create(ApplicationRouteMixin, {
     });
   },
 
-  _getDeprecatedUrlHashData() {
-    return new RSVP.Promise((resolve, reject) => {
-
-      const auth0 = get(this, 'auth0').getAuth0Instance();
-      const parsedPayload = auth0.parseHash();
-
-      if (parsedPayload && parsedPayload.error && parsedPayload.error_description) {
-        parsedPayload.errorDescription = decodeURI(parsedPayload.error_description);
-        delete parsedPayload.error_description;
-        return reject(parsedPayload);
-      }
-
-      return resolve(parsedPayload);
-    });
+  _clearUrlHash() {
+    if(!testing && window.history) {
+      window.history.pushState('', document.title, window.location.pathname + window.location.search);
+    }
+    return RSVP.resolve()
   },
+
   _setupFutureEvents() {
     // Don't schedule expired events during testing, otherwise acceptance tests will hang.
     if (testing) {
@@ -138,21 +119,22 @@ export default Mixin.create(ApplicationRouteMixin, {
    */
   _expiresAt: computed('session.data.authenticated', {
     get() {
-      let exp = 0;
-
       if (!get(this, 'session.isAuthenticated')) {
-        return exp;
+        return 0;
       }
 
-      const foo = getWithDefault(this, 'session.data.authenticated.idTokenPayload.exp', exp);
+      let expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
+      let issuedAt = getWithDefault(this, 'session.data.authenticated.idTokenPayload.iat', 0);
 
-      return getWithDefault(this, 'session.data.authenticated.expiresIn', foo);
+      return issuedAt + expiresIn;
     }
   }),
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      return getWithDefault(this, '_expiresAt', 0);
+      let remaining = getWithDefault(this, '_expiresAt', 0) - Math.ceil(Date.now() / 1000);
+
+      return remaining < 0 ? 0 : remaining;
     }
   }),
 

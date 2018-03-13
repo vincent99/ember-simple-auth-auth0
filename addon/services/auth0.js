@@ -3,7 +3,7 @@ import Auth0 from 'auth0';
 import Auth0Lock from 'auth0-lock';
 import Auth0LockPasswordless from 'auth0-lock-passwordless';
 import createSessionDataObject from '../utils/create-session-data-object';
-import semver from '../utils/semver';
+import { Auth0Error } from '../utils/errors'
 
 const {
   Service,
@@ -11,7 +11,6 @@ const {
   computed: {
     readOnly,
   },
-  deprecate,
   get,
   getOwner,
   getProperties,
@@ -23,8 +22,6 @@ const {
   },
   RSVP,
 } = Ember;
-
-const assign = Ember.assign || Ember.merge;
 
 const validPasswordlessTypes = [
   'sms',
@@ -63,33 +60,9 @@ export default Service.extend({
    */
   domain: readOnly('config.domain'),
 
-  isGreaterThanVersion8: computed(function() {
-    return semver(get(this, '_auth0.version'), '8.0.0') > 0;
-  }),
-
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
   showLock(options, clientID = null, domain = null) {
-    deprecate(
-      'The current default options being passed into lock will no longer be passed in by default you will need to explicitly set them.',
-      false,
-      {
-        id: 'ember-simple-auth-auth0',
-        until: 'v4.0.0',
-      });
-
-    let defaultOptions = {
-      autoclose: true,
-      auth: {
-        redirect: false,
-        params: {
-          scope: 'openid'
-        },
-      }
-    };
-
-    options = assign(defaultOptions, options);
-
     return new RSVP.Promise((resolve, reject) => {
       const lock = this.getAuth0LockInstance(options, clientID, domain);
       this._setupLock(lock, resolve, reject);
@@ -100,17 +73,6 @@ export default Service.extend({
   showPasswordlessLock(type, options, clientID = null, domain = null) {
     assert(`You must pass in a valid type to auth0-lock-passwordless authenticator. Valid types: ${validPasswordlessTypes.toString()}`,
       validPasswordlessTypes.indexOf(type) > -1);
-
-    let defaultOptions = {
-      auth: {
-        params: {
-          scope: 'openid'
-        },
-        audience: `${clientID}`
-      }
-    };
-
-    options = assign(defaultOptions, options);
 
     return new RSVP.Promise((resolve) => {
       const lock = this.getAuth0LockPasswordlessInstance(clientID, domain);
@@ -125,12 +87,12 @@ export default Service.extend({
     // lock.on('hash_parsed', resolve);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
-        return reject(new Error('The authenticated data did not come back from the request'));
+        return reject(new Auth0Error('The authenticated data did not come back from the request'));
       }
 
-      lock.getProfile(authenticatedData.idToken, (error, profile) => {
+      lock.getUserInfo(authenticatedData.accessToken, (error, profile) => {
         if (error) {
-          return reject(error);
+          return reject(new Auth0Error(error));
         }
 
         resolve(createSessionDataObject(profile, authenticatedData));
@@ -150,11 +112,7 @@ export default Service.extend({
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 
-    let Auth0Constructor = get(this, '_auth0');
-
-    if (get(this, 'isGreaterThanVersion8')) {
-      Auth0Constructor = Auth0.WebAuth;
-    }
+    const Auth0Constructor = get(this, '_auth0.WebAuth');
 
     return new Auth0Constructor({
       domain,
