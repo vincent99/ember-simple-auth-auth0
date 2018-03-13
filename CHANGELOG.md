@@ -1,6 +1,15 @@
 Changelog
 =========
 
+## v4.0.0-beta.0 (March 13th, 2018)
+
+### Pull Requests
+
+- [#96](https://github.com/auth0-community/ember-simple-auth-auth0/pull/96)  Upgrade Lock to v11  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+- [#102](https://github.com/auth0-community/ember-simple-auth-auth0/pull/102)  Remove deprecated default lock options  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+- [#103](https://github.com/auth0-community/ember-simple-auth-auth0/pull/103)  Fix URL Hash errors  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+- [#105](https://github.com/auth0-community/ember-simple-auth-auth0/pull/105)  Fix the way _expiresAt is calculated  *by [Marius Leustean](https://github.com/mariusleu)*
+
 ## v3.1.0 (November 22nd, 2017)
 
 ## Auth0.js and Lock are now installed via NPM/Yarn
