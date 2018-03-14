@@ -54,20 +54,16 @@ export default Service.extend({
 
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
 
-  showLock(options, clientID = null, domain = null) {
+  showLock(options, clientID = null, domain = null, passwordless = false) {
     return new RSVP.Promise((resolve, reject) => {
-      const lock = this.getAuth0LockInstance(options, clientID, domain);
+      const lock = this.getAuth0LockInstance(options, clientID, domain, passwordless);
       this._setupLock(lock, resolve, reject);
       lock.show();
     });
   },
 
   showPasswordlessLock(options, clientID = null, domain = null) {
-    return new RSVP.Promise((resolve, reject) => {
-      const lock = this.getAuth0LockPasswordlessInstance(options, clientID, domain);
-      this._setupLock(lock, resolve, reject);
-      lock.show();
-    });
+    return this.showLock(options, clientID, domain, true);
   },
 
   _setupLock(lock, resolve, reject) {
@@ -90,10 +86,10 @@ export default Service.extend({
     });
   },
 
-  getAuth0LockInstance(options, clientID = null, domain = null) {
+  getAuth0LockInstance(options, clientID = null, domain = null, passwordless = false) {
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
-    const Auth0LockConstructor = get(this, '_auth0Lock');
+    const Auth0LockConstructor = get(this, passwordless ? '_auth0LockPasswordless' : '_auth0Lock');
 
     return new Auth0LockConstructor(clientID, domain, options);
   },
@@ -111,11 +107,7 @@ export default Service.extend({
   },
 
   getAuth0LockPasswordlessInstance(options, clientID = null, domain = null) {
-    clientID = clientID || get(this, 'clientID');
-    domain = domain || get(this, 'domain');
-    const Auth0LockPasswordlessConstructor = get(this, '_auth0LockPasswordless');
-
-    return new Auth0LockPasswordlessConstructor(clientID, domain, options);
+    return this.getAuth0LockInstance(options, clientID, domain, true);
   },
 
   navigateToLogoutURL() {
