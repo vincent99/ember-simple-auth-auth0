@@ -505,25 +505,14 @@ auth0-js@6.8.0:
     winchan "^0.1.1"
     xtend "~2.1.1"
 
-auth0-js@9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/auth0-js/-/auth0-js-9.0.1.tgz#cd51eafd513d182b67708acd0792d7d4808435e5"
+auth0-js@^9.3.3:
+  version "9.3.3"
+  resolved "https://registry.yarnpkg.com/auth0-js/-/auth0-js-9.3.3.tgz#c4573ffefba102171982d4a2044eade73baa1b8d"
   dependencies:
     base64-js "^1.2.0"
-    idtoken-verifier "^1.1.0"
+    idtoken-verifier "^1.1.2"
     qs "^6.4.0"
-    superagent "^3.3.1"
-    url-join "^1.1.0"
-    winchan "^0.2.0"
-
-auth0-js@^9.0.2:
-  version "9.0.2"
-  resolved "https://registry.yarnpkg.com/auth0-js/-/auth0-js-9.0.2.tgz#435c2c9c4b819ff33b9a3137644ba7c6035555eb"
-  dependencies:
-    base64-js "^1.2.0"
-    idtoken-verifier "^1.1.0"
-    qs "^6.4.0"
-    superagent "^3.3.1"
+    superagent "^3.8.2"
     url-join "^1.1.0"
     winchan "^0.2.0"
 
@@ -543,14 +532,13 @@ auth0-lock-passwordless@^2.2.3:
     reqwest "^1.1.4"
     trim "0.0.1"
 
-auth0-lock@^11.0.1:
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/auth0-lock/-/auth0-lock-11.0.1.tgz#a51dadfdbce43dd0c52d7c79de78edd8555ad838"
+auth0-lock@^11.4.0:
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/auth0-lock/-/auth0-lock-11.4.0.tgz#286efccb79a66419873b415febccbf2c0485aa80"
   dependencies:
-    auth0-js "9.0.1"
+    auth0-js "^9.3.3"
     blueimp-md5 "2.3.1"
     fbjs "^0.3.1"
-    idtoken-verifier "^1.0.1"
     immutable "^3.7.3"
     jsonp "^0.2.0"
     password-sheriff "^1.1.0"
@@ -558,7 +546,6 @@ auth0-lock@^11.0.1:
     react "^15.6.2"
     react-dom "^15.6.2"
     react-transition-group "^2.2.1"
-    superagent "^3.3.1"
     trim "0.0.1"
     url-join "^1.1.0"
 
@@ -4592,14 +4579,14 @@ iconv-lite@0.4.19, iconv-lite@^0.4.5, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-idtoken-verifier@^1.0.1, idtoken-verifier@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/idtoken-verifier/-/idtoken-verifier-1.1.0.tgz#1add30125aa3e5e5859d152b356a908a8e2eb5a0"
+idtoken-verifier@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/idtoken-verifier/-/idtoken-verifier-1.1.2.tgz#bd5125aaccc221c1e0c57c9393dc68c0f7134b69"
   dependencies:
     base64-js "^1.2.0"
     crypto-js "^3.1.9-1"
     jsbn "^0.1.0"
-    superagent "^3.3.1"
+    superagent "^3.8.2"
     url-join "^1.1.0"
 
 ieee754@^1.1.4:
@@ -8116,7 +8103,7 @@ sum-up@^1.0.1:
   dependencies:
     chalk "^1.0.0"
 
-superagent@^3.3.1:
+superagent@^3.8.2:
   version "3.8.2"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.8.2.tgz#e4a11b9d047f7d3efeb3bbe536d9ec0021d16403"
   dependencies:
