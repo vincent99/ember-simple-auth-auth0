@@ -28,13 +28,7 @@ function webpackify(name, dir) {
       new wp.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(EmberAddon.env())
       })
-    ],
-    resolve: {
-      alias: {
-        'react'    : path.dirname(require.resolve('react')),
-        'react-dom': path.dirname(require.resolve('react-dom')),
-      }
-    }
+    ]
   });
 }
 
@@ -43,9 +37,8 @@ module.exports = {
   included: function(app) {
     this._super.included(app);
 
-    app.import('vendor/auth0-js.js'               , transformAMD('auth0'                  ));
-    app.import('vendor/auth0-lock.js'             , transformAMD('auth0-lock'             ));
-    app.import('vendor/auth0-lock-passwordless.js', transformAMD('auth0-lock-passwordless'));
+    app.import('vendor/auth0-js.js'  , transformAMD('auth0'     ));
+    app.import('vendor/auth0-lock.js', transformAMD('auth0-lock'));
 
     return app;
   },
@@ -58,9 +51,8 @@ module.exports = {
 
       // [XA] use webpack to transform the CommonJS libs to AMD so we can import 'em.
 
-      trees.push(webpackify('auth0-js'               , 'src'));
-      trees.push(webpackify('auth0-lock'             , 'lib'));
-      trees.push(webpackify('auth0-lock-passwordless', 'lib'));
+      trees.push(webpackify('auth0-js'  , 'src'));
+      trees.push(webpackify('auth0-lock', 'lib'));
 
       return new MergeTrees(trees);
   }
