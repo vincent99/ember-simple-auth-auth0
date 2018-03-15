@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v4.0.0-beta.1 (March 15th, 2018)
+
+### Pull Requests
+
+- [#106](https://github.com/auth0-community/ember-simple-auth-auth0/pull/106)  Remove auth0-lock-passwordless in favor of Lock 11 support  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.0-beta.0 (March 13th, 2018)
 
 ### Pull Requests
