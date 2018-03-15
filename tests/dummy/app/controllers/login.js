@@ -19,13 +19,15 @@ export default Controller.extend({
     login() {
       get(this, 'session').authenticate('authenticator:auth0-lock');
     },
-    loginPasswordless(type) {
+    loginPasswordless(method, connection) {
       const lockOptions = {
+        passwordlessMethod: method,
+        allowedConnections: [connection],
         autoclose: true,
       };
 
-      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', type, lockOptions, () => {
-        Logger.info(`Passwordless ${type} sent`);
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', lockOptions, () => {
+        Logger.info('Passwordless sent');
       });
     }
   }

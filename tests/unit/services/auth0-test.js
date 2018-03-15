@@ -26,9 +26,6 @@ const StubLock = Ember.Object.extend(Evented, {
     }
   },
   show: sinon.stub(),
-  sms: sinon.stub(),
-  magiclink: sinon.stub(),
-  emailcode: sinon.stub(),
 });
 
 moduleFor('service:auth0', 'Unit | Service | auth0', {
@@ -71,33 +68,6 @@ test('it calculates the logoutURL correctly giving logoutReturnToURL precedence'
   let service = this.subject();
   assert.equal(get(service, 'logoutReturnToURL'),
     config['ember-simple-auth'].auth0.logoutReturnToURL);
-});
-
-test('showPasswordlessLock throws an error when the wrong type is passed in', function(assert) {
-  assert.expect(1);
-  this.registerConfig();
-  const subject = this.subject();
-  assert.throws(() => subject.showPasswordlessLock());
-});
-
-test('showPasswordlessLock assigns options', function(assert) {
-  assert.expect(1);
-  this.registerConfig();
-  const subject = this.subject({
-    getAuth0LockPasswordlessInstance: this.stubLock()
-  });
-
-  const options = {
-    auth: {
-      params: {
-        scope: 'openid user_id'
-      },
-    },
-  };
-
-  subject.showPasswordlessLock('sms', options);
-
-  assert.ok(subject.getAuth0LockPasswordlessInstance().sms.calledWith(options));
 });
 
 test('showLock calls getUserInfo', function(assert) {
