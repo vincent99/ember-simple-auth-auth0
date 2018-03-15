@@ -412,13 +412,13 @@ fetch('/api/foo', {
 });
 ```
 
-# Migrating from Ember-Simple-Auth-Auth0 v3.x
+# Migrating from Ember-Simple-Auth-Auth0 v3.x.
 
 Starting from version 4.0.0, this addon uses Lock v11, which now supports Passwordless functionality among other things. As such, there are a few breaking changes to consider for users coming from v3.x
 
 ## Auth0 Migration Guides
 
-First and foremost, take a look at the following guides from Autho; these cover most of the requirements:
+First and foremost, take a look at the following guides from Auth0; these cover most of the requirements:
 * [Migrating from Lock v10 to v11](https://auth0.com/docs/libraries/lock/v11/migration-v10-v11)
 * [Migration Guide for lock-passwordless to Lock v11 with Passwordless Mode](https://auth0.com/docs/libraries/lock/v11/migration-lock-passwordless)
  
