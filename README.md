@@ -6,26 +6,25 @@
 
 ### An ember-cli addon for using [Auth0](https://auth0.com/) with [Ember Simple Auth](https://github.com/simplabs/ember-simple-auth).
 
-Auth0's [lock](https://github.com/auth0/lock) widget, is a nice way to get a fully functional signup and login workflow into your app.
+Auth0's [Lock](https://github.com/auth0/lock) widget is a nice way to get a fully functional signup and login workflow into your app.
 
 ## What does it do?
 
-* Wires up Auth0's Lock.js to work with ember simple auth.
-* Lets you work with ember simple auth just like you normally do!
+* Wires up Auth0's Lock.js to work with Ember Simple Auth.
+* Lets you work with Ember Simple Auth just like you normally do!
 
 ### Auth0
 
-If you don't already have an account, go signup at for free: [Auth0](https://auth0.com/)
+If you don't already have an account, go sign up at for free: [Auth0](https://auth0.com/)
 
 1. Create a new app through your dashboard.
 2. Add `http://localhost:4200` to your Allowed Callback URLs through your dashboard
 3. Done!
 
-__If you are using Auth0.js > 8.x.x make sure to use JsonWebToken Signature Algorithm RS256 in your `Clients` settings under the `Advanced Settings -> OAuth` tab.
-
 ## Installation
 
-**Install this addon with ember-cli** `ember install ember-simple-auth-auth0`
+Install this addon with ember-cli:
+```ember install ember-simple-auth-auth0```
 
 ## Global Configuration
 
@@ -73,7 +72,7 @@ ENV['contentSecurityPolicy'] = {
 
 ## Data object on the session
 
-The following is what the session object looks like after the user has been authenticated.
+The following is what the session object looks like after the user has been authenticated (sans the placeholders in <angle brackets>, which are filled with real data during actual use).
 
 __Note: all keys coming back from auth0 are transformed to camelcase for consistency__
 
@@ -81,45 +80,45 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
 {
   "authenticated": {
     "authenticator": "authenticator:auth0-lock",
+    "accessToken": "<access_token>",
+    "idToken": "<id_token>",
+    "idTokenPayload": {
+      "iss": "https://<your_domain>.auth0.com/",
+      "sub": "auth0|<user_id>",
+      "aud": "<client_id>",
+      "iat": 1521131759,
+      "exp": 1521167759
+    },
+    "appState": null,
+    "refreshToken": null,
+    "state": "<state>",
+    "expiresIn": 86400,
+    "tokenType": "Bearer",
+    "scope": "openid user_metadata",
     "profile": {
-      "email": "bob@simplymeasured.com",
-      "app_metadata": {
-        "is_sm_admin": true,
-        "api_access": true,
-        "sm3_eligible": true
-      },
-      "user_metadata": {
-        "profile_image": "https://s.gravatar.com/avatar/aaafe9b3923266eacb178826a65e92d1?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatar2%2Fcw.png",
-        "email": "bob@domain.com",
-        "first_name": "bob",
-        "last_name": "johnson"
-      },
+      "email": "bob.johnson@domain.com",
+      "picture": "https://s.gravatar.com/avatar/aaafe9b3923266eacb178826a65e92d1?s=480&r=pg&d=https%3A%2F%2Fcdn.auth0.com%2Favatar2%2Fcw.png",
+      "nickname": "bob.johnson",
+      "name": "bob.johnson@domain.com",
+      "last_password_reset": "2018-03-11T18:03:13.291Z",
       "email_verified": true,
-      "clientID": "Yw2Y9D433veMHCred7j0BESjlnwF7ry8",
-      "updated_at": "2016-11-15T00:49:16.663Z",
-      "user_id": "auth0|0ca04c34-2247-40f9-b918-292a4bab8995",
+      "user_id": "auth0|<user_id>",
+      "clientID": "<client_id>",
       "identities": [
         {
-          "user_id": "0bc04c32-2247-40f9-b918-292a4bab8995",
+          "user_id": "<user_id>",
           "provider": "auth0",
-          "connection": "social",
+          "connection": "IP-DB",
           "isSocial": false
         }
       ],
-      "created_at": "2016-03-29T18:47:22.112Z",
-      "global_client_id": "IW1j1MbdaRIz0pOwPdN2Ciuh2uIdzfyQ"
-    },
-    "accessToken": "BS72xWcch5x2KZQu",
-    "idToken": "eyJ0eXAiOiJKV1Q1LCJhbGciOiJIUzI1NiJ9.1yJpc3MiOiJodHRwczovL3NpbXBseW1lYXN1cmVkLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHwwYmEwNGMzNC0yMjQ3LTQwZjktYjkxOC0yOTJhNGJhYjg5OTUiLCJhdWQiOiJZd0RZOUQ0MzN2ZU1IQ3JlZDdqMEJFU2psbndGN3J5OCIsImV4cCI6MTQ3OTY3MDk1NywiaWF0IjoxNDc5MTcwOTU3fQ.JFHqL1GElPgY86ujjECXX3TOYjiTiIn-tXB1AV0-j2s",
-    "idTokenPayload": {
-      "iss": "https://domain.auth0.com/",
-      "sub": "auth0|0ba01134-2247-40f9-b918-292a4bab8995",
-      "aud": "YwDY9D431v1MHCred7j0BESjlnwF7ry8",
-      "exp": 1479670957,
-      "iat": 1479170957
+      "updated_at": "2018-03-15T16:35:59.036Z",
+      "created_at": "2016-11-09T22:43:53.994Z",
+      "sub": "auth0|<user_id>"
     }
   }
 }
+
 ```
 
 __You can use this in your templates that have the session service injected.__
@@ -232,18 +231,12 @@ export default Controller.extend({
 
 # Passwordless
 
-__In order to perform passwordless login you need to use *authenticator:auth0-lock-passwordless* and pass in one of the valid passwordless types.__
+To perform passwordless login, use the `auth0-lock-passwordless` authenticator. That's it!
 
-### Passwordless Types
+For more information on how to set up Passwordless auth server side and how to configure the Lock, see the following official guides:
 
-* sms
-* emailcode
-* magiclink
-* socialOrMagiclink
-
-### Customization
-
-To see a list of options that can be used with the passwordless authenticator please see [auth0-lock-passwordless repo](https://github.com/auth0/lock-passwordless#customization)
+* [Using Passwordless Authentication](https://auth0.com/docs/connections/passwordless) (server-side setup)
+* [Passwordless Options](https://auth0.com/docs/libraries/lock/v11#passwordless-options) for Lock
 
 ## Example
 
@@ -267,12 +260,14 @@ export default Controller.extend({
       // Check out the docs for all the options:
       // https://github.com/auth0/lock-passwordless#customization
       const lockOptions = {
+       allowedConnections: ['email'],
+       passwordlessMethod: 'link',
        authParams: {
          scope: 'openid user_metadata'
        }
       };
 
-      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', 'magiclink', lockOptions, (err, email) => {
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', lockOptions, (err, email) => {
         console.log(`Email link sent to ${email}!`)
       });
     },
@@ -284,11 +279,11 @@ export default Controller.extend({
 });
 ```
 
-__Note that you can pass in a callback as the last argument. This proxies the lock-passwordless callback call so that the developer can then handle events after a passwordless link has been sent__
+Note that you can pass in a callback as the last argument to handle events after a passwordless link has been sent.
 
 # Acceptance Testing
 
-If you want to acceptance test the auth0 lock there are two things you can do.
+If you want to craft acceptance tests for Auth0's Lock, there are two things you can do:
 
 - If you are just using the default auth0-lock authenticator then all you have to do is authenticateSession.
 - If you are manually invoking the auth0 lock you should use the `showLock` function on the auth0 service and then call `mockAuth0Lock` in your test.
@@ -336,9 +331,9 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 
 ## Handling errors
 
-__Errors come back as a hash in the url. These will be automatically parsed and ember will transition to the error route with two variables set on the model. error and errorDescription__
+Errors come back as a hash in the URL. These will be automatically parsed and ember will transition to the error route with two variables set on the model: `error` and `errorDescription`. A quick example:
 
-`ember g template application-error`
+```ember g template application-error```
 
 ```hbs
 // app/templates/application-error.hbs
@@ -348,9 +343,11 @@ Encountered an error from auth0 - {{model.error}} -- {{model.errorDescription}}
 
 ## Calling an API
 
+Use the `jwt` authorizer to get the user's token for API-calling purposes.
+
 See [server](./server) for an example of an express application getting called by the ember app.
 
-If you are using [ember-data](https://github.com/emberjs/data)
+An example using [ember-data](https://github.com/emberjs/data):
 
 `ember g adapter application`
 
@@ -414,6 +411,82 @@ fetch('/api/foo', {
   // use response
 });
 ```
+
+# Migrating from Ember-Simple-Auth-Auth0 v3.x
+
+Starting from version 4.0.0, this addon uses Lock v11, which now supports Passwordless functionality among other things. As such, there are a few breaking changes to consider for users coming from v3.x
+
+## Auth0 Migration Guides
+
+First and foremost, take a look at the following guides from Autho; these cover most of the requirements:
+* [Migrating from Lock v10 to v11](https://auth0.com/docs/libraries/lock/v11/migration-v10-v11)
+* [Migration Guide for lock-passwordless to Lock v11 with Passwordless Mode](https://auth0.com/docs/libraries/lock/v11/migration-lock-passwordless)
+ 
+## Passwordless Auth Changes
+
+For those using this addon with Passwordless authentication, the API for the `auth0-lock-passwordless` authenticator has changed.
+
+The major **breaking change** is that the "type" parameter for the `auth0-lock-passwordless` authenticator is gone. Instead, set the `passwordlessMethod` and `allowedConnections` options in the options hash:
+
+```javascript
+// app/controllers/application.js
+
+import Ember from 'ember';
+
+const {
+  Controller,
+  inject: {
+    service
+  },
+  get
+} = Ember;
+
+export default Controller.extend({
+  session: service(),
+  actions: {
+
+    // OLD method of invoking passwordless auth (v3.x):
+
+    loginOld () {
+      const lockOptions = {
+       authParams: {
+         scope: 'openid user_metadata'
+       }
+      };
+
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', 'magiclink', lockOptions, (err, email) => {
+        console.log(`Email link sent to ${email}!`)
+      });
+    },
+
+    // NEW method of invoking passwordless auth (v4.x):
+
+    loginNew () {
+      const lockOptions = {
+       allowedConnections: ['email'],
+       passwordlessMethod: 'link',
+       authParams: {
+         scope: 'openid user_metadata'
+       }
+      };
+
+      get(this, 'session').authenticate('authenticator:auth0-lock-passwordless', lockOptions, (err, email) => {
+        console.log(`Email link sent to ${email}!`)
+      });
+    },
+
+    logout () {
+      get(this, 'session').invalidate();
+    }
+  }
+});
+```
+
+The good news here is that the `auth0-lock-passwordless` authenticator works exactly like `auth0-lock`; no more subtle differences.
+
+On the off-chance your Ember app is calling the `showPasswordlessLock` method of the `auth0` service directly, its `type` parameter has similarly been removed. The process of converting `type` to `options` is the same as above.
+
+See the [Initialization options](https://auth0.com/docs/libraries/lock/v11/migration-lock-passwordless#using-npm-module-bundler#initialization-options) section of Auth0's Passwordless migration guide for more details, though the above advice should hopefully suffice.
 
 # Contributing
 
