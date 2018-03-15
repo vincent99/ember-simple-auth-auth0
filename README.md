@@ -108,7 +108,7 @@ __Note: all keys coming back from auth0 are transformed to camelcase for consist
         {
           "user_id": "<user_id>",
           "provider": "auth0",
-          "connection": "IP-DB",
+          "connection": "<connection_id>",
           "isSocial": false
         }
       ],
