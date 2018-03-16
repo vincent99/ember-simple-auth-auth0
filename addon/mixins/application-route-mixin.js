@@ -79,8 +79,9 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _getUrlHashData() {
     const auth0 = get(this, 'auth0').getAuth0Instance();
+    const enableImpersonation = !!get(this, 'auth0.config.enableImpersonation');
     return new RSVP.Promise((resolve, reject) => {
-      auth0.parseHash((err, parsedPayload) => {
+      auth0.parseHash({__enableImpersonation: enableImpersonation}, (err, parsedPayload) => {
         if (err) {
           return reject(new Auth0Error(err));
         }
