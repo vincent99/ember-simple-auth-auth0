@@ -33,6 +33,7 @@ Install this addon with ember-cli:
 1. (REQUIRED) - _clientID_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 2. (REQUIRED) - _domain_ - Grab from your [Auth0 Dashboard](https://manage.auth0.com/#/clients)
 3. (OPTIONAL) - _logoutReturnToURL_ - This can be overridden if you have a different logout callback than the login page.
+4. (OPTIONAL) - _enableImpersonation_ - Enables user impersonation. False by default.
 The logoutURL that is actually gets used is constructed as follows:
 
 ```js
@@ -45,6 +46,7 @@ module.exports = function(environment) {
         clientID: '1234',
         domain: 'my-company.auth0.com',
         logoutReturnToURL: '/logout',
+        enableImpersonation: false
       }
     }
   };
@@ -428,7 +430,7 @@ For those using this addon with Passwordless authentication, the API for the `au
 
 The major **breaking change** is that the "type" parameter for the `auth0-lock-passwordless` authenticator is gone. Instead, set the `passwordlessMethod` and `allowedConnections` options in the options hash:
 
-```javascript
+```js
 // app/controllers/application.js
 
 import Ember from 'ember';
@@ -487,6 +489,31 @@ The good news here is that the `auth0-lock-passwordless` authenticator works exa
 On the off-chance your Ember app is calling the `showPasswordlessLock` method of the `auth0` service directly, its `type` parameter has similarly been removed. The process of converting `type` to `options` is the same as above.
 
 See the [Initialization options](https://auth0.com/docs/libraries/lock/v11/migration-lock-passwordless#using-npm-module-bundler#initialization-options) section of Auth0's Passwordless migration guide for more details, though the above advice should hopefully suffice.
+
+## Impersonation
+
+User impersonation is [disabled by default](https://github.com/auth0/auth0.js/issues/683) in newer versions of Auth0.js (and consequently, this addon starting from v4.0.0). To enable it, you'll need to set the `enableImpersonation` flag in your app's `config/environment.js`, like so:
+
+```js
+// config/environment.js
+module.exports = function(environment) {
+  let ENV = {
+    'ember-simple-auth': {
+      authenticationRoute: 'login',
+      auth0: {
+        clientID: '1234',
+        domain: 'my-company.auth0.com',
+        logoutReturnToURL: '/logout',
+        enableImpersonation: true
+      }
+    }
+  };
+
+  return ENV;
+};
+```
+
+Be warned that enabling impersonation has security trade-offs, so use with caution.
 
 # Contributing
 

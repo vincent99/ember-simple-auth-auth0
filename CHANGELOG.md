@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v4.0.0-beta.2 (March 16th, 2018)
+
+### Pull Requests
+
+- [#108](https://github.com/auth0-community/ember-simple-auth-auth0/pull/108)  Add enableImpersonation flag  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.0-beta.1 (March 15th, 2018)
 
 ### Pull Requests
