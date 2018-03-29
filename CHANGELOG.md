@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## v4.0.0-beta.3 (March 29th, 2018)
+
+### Pull Requests
+
+- [#113](https://github.com/auth0-community/ember-simple-auth-auth0/pull/113)  Add tutorial how to stub the authenticator  *by [Robert Schaefer](https://github.com/roschaefer)*
+- [#115](https://github.com/auth0-community/ember-simple-auth-auth0/pull/115)  Fix "Last time you logged in with..." button in Passwordless mode  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.0-beta.2 (March 16th, 2018)
 
 ### Pull Requests
