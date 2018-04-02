@@ -1,6 +1,14 @@
 Changelog
 =========
 
+## v4.0.0 (April 2nd, 2018)
+
+## Lock 11 is here!
+
+- Lock has been updated to v11. See README.md for instructions on migrating.
+- `auth0-lock-passwordless` has been removed in favor of Lock 11's native Passwordless support.
+- Bugfixes, as always.
+
 ## v4.0.0-beta.3 (March 29th, 2018)
 
 ### Pull Requests
