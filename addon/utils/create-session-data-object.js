@@ -1,6 +1,8 @@
 import Ember from 'ember';
 const assign = Ember.assign || Ember.merge;
 
+import now from '../utils/now';
+
 export default function createSessionDataObject(profile, tokenInfo) {
-  return assign(tokenInfo, { profile });
+  return assign({ issuedAt: now() }, tokenInfo, { profile });
 }

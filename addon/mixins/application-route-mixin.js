@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
 import { Auth0Error } from '../utils/errors'
+import now from '../utils/now';
 
 const {
   Mixin,
@@ -133,7 +134,7 @@ export default Mixin.create(ApplicationRouteMixin, {
         issuedAt = getWithDefault(idTokenPayload, 'iat', 0);
         expiresIn = getWithDefault(idTokenPayload, 'exp', 0);
       } else {
-        issuedAt = get(this, '_now');
+        issuedAt = getWithDefault(this, 'session.data.authenticated.issuedAt', 0);
         expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
       }
 
@@ -143,15 +144,9 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      let remaining = getWithDefault(this, '_expiresAt', 0) - get(this, '_now');
+      let remaining = getWithDefault(this, '_expiresAt', 0) - now();
 
       return remaining < 0 ? 0 : remaining;
-    }
-  }),
-
-  _now: computed({
-    get() {
-      return Math.ceil(Date.now() / 1000);
     }
   }),
 
