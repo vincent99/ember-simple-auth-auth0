@@ -124,8 +124,18 @@ export default Mixin.create(ApplicationRouteMixin, {
         return 0;
       }
 
-      let expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
-      let issuedAt = getWithDefault(this, 'session.data.authenticated.idTokenPayload.iat', 0);
+      let issuedAt;
+      let expiresIn;
+
+      const idTokenPayload = get(this, 'session.data.authenticated.idTokenPayload');
+
+      if(idTokenPayload) {
+        issuedAt = getWithDefault(idTokenPayload, 'iat', 0);
+        expiresIn = getWithDefault(idTokenPayload, 'exp', 0);
+      } else {
+        issuedAt = get(this, '_now');
+        expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
+      }
 
       return issuedAt + expiresIn;
     }
@@ -133,9 +143,15 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      let remaining = getWithDefault(this, '_expiresAt', 0) - Math.ceil(Date.now() / 1000);
+      let remaining = getWithDefault(this, '_expiresAt', 0) - get(this, '_now');
 
       return remaining < 0 ? 0 : remaining;
+    }
+  }),
+
+  _now: computed({
+    get() {
+      return Math.ceil(Date.now() / 1000);
     }
   }),
 
