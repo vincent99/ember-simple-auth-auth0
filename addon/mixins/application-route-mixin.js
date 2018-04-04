@@ -18,7 +18,6 @@ const {
     service
   },
   run,
-  testing,
   isEmpty,
 } = Ember;
 
@@ -94,7 +93,7 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _clearUrlHash() {
-    if(!testing && window.history) {
+    if(!Ember.testing && window.history) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
     return RSVP.resolve()
@@ -102,7 +101,7 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _setupFutureEvents() {
     // Don't schedule expired events during testing, otherwise acceptance tests will hang.
-    if (testing) {
+    if (Ember.testing) {
       return;
     }
 
