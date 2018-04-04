@@ -2,6 +2,7 @@ import Ember from 'ember';
 import ApplicationRouteMixinMixin from 'ember-simple-auth-auth0/mixins/application-route-mixin';
 import { moduleFor } from 'ember-qunit';
 import test from 'ember-sinon-qunit/test-support/test';
+import now from 'ember-simple-auth-auth0/utils/now';
 
 const {
   get,
@@ -29,17 +30,36 @@ moduleFor('mixin:application-route-mixin', 'Unit | Mixin | application route mix
   }
 });
 
-test('it sets the correct expiration time if the expiresIn exists', function(assert) {
+test('it sets the correct expiration time if the expiresIn header exists', function(assert) {
   assert.expect(1);
-  const issuedAt = Math.ceil(Date.now() / 1000);
+  const issuedAt = now();
   const subject = this.subject({
     session: {
       isAuthenticated: true,
       data: {
         authenticated: {
           expiresIn: 10,
+          issuedAt: issuedAt
+        },
+      },
+    },
+  });
+
+  assert.equal(get(subject, '_expiresAt'), issuedAt + 10);
+});
+
+test('it sets the correct expiration time if the id token exists', function(assert) {
+  assert.expect(1);
+  const issuedAt = now();
+  const subject = this.subject({
+    session: {
+      isAuthenticated: true,
+      data: {
+        authenticated: {
+          expiresIn: 12, // should NOT match
           idTokenPayload: {
-            iat: issuedAt
+            iat: issuedAt,
+            exp: issuedAt + 10
           }
         },
       },
