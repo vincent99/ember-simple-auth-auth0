@@ -33,7 +33,8 @@ test('visiting /login redirects to /protected page if authenticated', function(a
 test('it mocks the auth0 lock login and logs in the user', function(assert) {
   assert.expect(2);
   const sessionData = {
-    idToken: 1
+    idToken: 1,
+    expiresIn: 3600
   };
 
   mockAuth0Lock(this.application, sessionData);
@@ -53,7 +54,8 @@ test('it mocks the auth0 lock login and logs in the user', function(assert) {
 test('it mocks the auth0 lock login again and logs in a different user', function(assert) {
   assert.expect(2);
   const sessionData = {
-    idToken: 2
+    idToken: 2,
+    expiresIn: 3600
   };
 
   mockAuth0Lock(this.application, sessionData);

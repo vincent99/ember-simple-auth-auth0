@@ -3100,6 +3100,15 @@ ember-macro-helpers@^0.17.0:
     ember-cli-test-info "^1.0.0"
     ember-weakmap "^3.0.0"
 
+ember-mockdate-shim@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/ember-mockdate-shim/-/ember-mockdate-shim-0.1.0.tgz#675bb6b0dda3a08e6bdbccaccd14b408b60925b1"
+  dependencies:
+    broccoli-funnel "^1.2.0"
+    broccoli-merge-trees "^2.0.0"
+    ember-cli-babel "^6.6.0"
+    mockdate "^2.0.1"
+
 ember-moment@^7.3.1:
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/ember-moment/-/ember-moment-7.5.0.tgz#9ed25b32ae941b2f1d9116c44f518a52bdb01722"
@@ -6012,6 +6021,10 @@ mkdirp@^0.3.5:
 mktemp@~0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/mktemp/-/mktemp-0.4.0.tgz#6d0515611c8a8c84e484aa2000129b98e981ff0b"
+
+mockdate@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/mockdate/-/mockdate-2.0.2.tgz#5ae0c0eaf8fe23e009cd01f9889b42c4f634af12"
 
 moment-timezone@^0.3.0:
   version "0.3.1"
