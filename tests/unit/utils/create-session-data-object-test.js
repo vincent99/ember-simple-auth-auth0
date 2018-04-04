@@ -5,6 +5,7 @@ import {
   test
 } from 'qunit';
 
+import { freezeDateAt, unfreezeDate } from 'ember-mockdate-shim';
 import now from 'ember-simple-auth-auth0/utils/now';
 
 const assign = Ember.assign || Ember.merge;
@@ -12,6 +13,7 @@ const assign = Ember.assign || Ember.merge;
 module('Unit | Utility | create session data object');
 
 test('it merges the profile and token info', function(assert) {
+  freezeDateAt(new Date('1993-12-10T08:44:00'));
   assert.expect(1);
 
   const issuedAt = now();
@@ -27,9 +29,11 @@ test('it merges the profile and token info', function(assert) {
   let expectedResult = assign({ issuedAt: issuedAt }, { profile }, tokenInfo);
   let result = createSessionDataObject(profile, tokenInfo);
   assert.deepEqual(result, expectedResult);
+  unfreezeDate();
 });
 
 test('it merges the profile and token info, ignoring a previous profile attribute', function(assert) {
+  freezeDateAt(new Date('1993-12-10T08:44:00'));
   assert.expect(1);
 
   const issuedAt = now();
@@ -51,6 +55,7 @@ test('it merges the profile and token info, ignoring a previous profile attribut
 
   let result = createSessionDataObject(profile, tokenInfo);
   assert.deepEqual(result, expectedResult);
+  unfreezeDate();
 });
 
 test('it issues a creation timestamp', function(assert) {
