@@ -1,6 +1,8 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
 import { Auth0Error } from '../utils/errors'
+import getSessionExpiration from '../utils/get-session-expiration';
+import now from '../utils/now';
 
 const {
   Mixin,
@@ -16,7 +18,6 @@ const {
     service
   },
   run,
-  testing,
   isEmpty,
 } = Ember;
 
@@ -92,7 +93,7 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _clearUrlHash() {
-    if(!testing && window.history) {
+    if(!Ember.testing && window.history) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
     return RSVP.resolve()
@@ -100,7 +101,7 @@ export default Mixin.create(ApplicationRouteMixin, {
 
   _setupFutureEvents() {
     // Don't schedule expired events during testing, otherwise acceptance tests will hang.
-    if (testing) {
+    if (Ember.testing) {
       return;
     }
 
@@ -124,16 +125,14 @@ export default Mixin.create(ApplicationRouteMixin, {
         return 0;
       }
 
-      let expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
-      let issuedAt = getWithDefault(this, 'session.data.authenticated.idTokenPayload.iat', 0);
-
-      return issuedAt + expiresIn;
+      const sessionData = get(this, 'session.data.authenticated');
+      return getSessionExpiration(sessionData);
     }
   }),
 
   _jwtRemainingTimeInSeconds: computed('_expiresAt', {
     get() {
-      let remaining = getWithDefault(this, '_expiresAt', 0) - Math.ceil(Date.now() / 1000);
+      let remaining = getWithDefault(this, '_expiresAt', 0) - now();
 
       return remaining < 0 ? 0 : remaining;
     }

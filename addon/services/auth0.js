@@ -14,7 +14,6 @@ const {
   getOwner,
   getProperties,
   assert,
-  testing,
   isEmpty,
   inject: {
     service
@@ -117,7 +116,7 @@ export default Service.extend({
       clientID
     } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
 
-    if (!testing) {
+    if (!Ember.testing) {
       window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
   },
