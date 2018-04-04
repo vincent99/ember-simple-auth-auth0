@@ -1,6 +1,18 @@
 Changelog
 =========
 
+## v4.0.1 (April 4th, 2018)
+
+### Bugfixes
+
+- Session no longer expires instantly when ID Token not present (e.g. OIDC Conformant workflows without `id_token` in the `responseType` option.)
+- Expired tokens are no longer restored when reloading apps
+- Fixed session expiration causing tests to hang
+
+### Pull Requests
+
+- [#117](https://github.com/auth0-community/ember-simple-auth-auth0/pull/117)  Fix token expiration glitchiness  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.0 (April 2nd, 2018)
 
 ## Lock 11 is here!
