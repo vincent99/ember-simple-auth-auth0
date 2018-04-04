@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import ApplicationRouteMixin from 'ember-simple-auth/mixins/application-route-mixin';
 import { Auth0Error } from '../utils/errors'
+import getSessionExpiration from '../utils/get-session-expiration';
 import now from '../utils/now';
 
 const {
@@ -125,17 +126,8 @@ export default Mixin.create(ApplicationRouteMixin, {
         return 0;
       }
 
-      const idTokenPayload = get(this, 'session.data.authenticated.idTokenPayload');
-
-      if(idTokenPayload) {
-        return getWithDefault(idTokenPayload, 'exp', 0);
-
-      } else {
-        const issuedAt = getWithDefault(this, 'session.data.authenticated.issuedAt', 0);
-        const expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
-
-        return issuedAt + expiresIn;
-      }
+      const sessionData = get(this, 'session.data.authenticated');
+      return getSessionExpiration(sessionData);
     }
   }),
 
