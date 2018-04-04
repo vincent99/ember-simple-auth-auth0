@@ -26,7 +26,10 @@ test('it merges the profile and token info', function(assert) {
     idToken: 'aaa.bbbb.ccc'
   };
 
-  let expectedResult = assign({ issuedAt: issuedAt }, { profile }, tokenInfo);
+  let expectedResult = { issuedAt: issuedAt };
+  assign(expectedResult, { profile });
+  assign(expectedResult, tokenInfo);
+
   let result = createSessionDataObject(profile, tokenInfo);
   assert.deepEqual(result, expectedResult);
   unfreezeDate();
