@@ -125,20 +125,17 @@ export default Mixin.create(ApplicationRouteMixin, {
         return 0;
       }
 
-      let issuedAt;
-      let expiresIn;
-
       const idTokenPayload = get(this, 'session.data.authenticated.idTokenPayload');
 
       if(idTokenPayload) {
-        issuedAt = getWithDefault(idTokenPayload, 'iat', 0);
-        expiresIn = getWithDefault(idTokenPayload, 'exp', 0);
-      } else {
-        issuedAt = getWithDefault(this, 'session.data.authenticated.issuedAt', 0);
-        expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
-      }
+        return getWithDefault(idTokenPayload, 'exp', 0);
 
-      return issuedAt + expiresIn;
+      } else {
+        const issuedAt = getWithDefault(this, 'session.data.authenticated.issuedAt', 0);
+        const expiresIn = getWithDefault(this, 'session.data.authenticated.expiresIn', 0);
+
+        return issuedAt + expiresIn;
+      }
     }
   }),
 
