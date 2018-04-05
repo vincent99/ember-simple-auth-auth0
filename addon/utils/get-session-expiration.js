@@ -13,10 +13,10 @@ const {
  * @return {Expiration time of token (Unix timestamp)}
  */
 export default function getSessionExpiration(sessionData) {
-  const idTokenPayload = get(sessionData, 'idTokenPayload');
+  const idTokenExpiration = get(sessionData, 'idTokenPayload.exp');
 
-  if(idTokenPayload) {
-    return getWithDefault(idTokenPayload, 'exp', 0);
+  if(idTokenExpiration) {
+    return idTokenExpiration;
 
   } else {
     const issuedAt = getWithDefault(sessionData, 'issuedAt', 0);
