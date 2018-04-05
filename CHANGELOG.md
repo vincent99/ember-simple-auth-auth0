@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v4.0.2 (April 4th, 2018)
+
+### Pull Requests
+
+- [#118](https://github.com/auth0-community/ember-simple-auth-auth0/pull/118)  Fix another zero-second-expiration bug  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.1 (April 4th, 2018)
 
 ### Bugfixes
