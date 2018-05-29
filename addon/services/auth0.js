@@ -109,20 +109,24 @@ export default Service.extend({
     return this.getAuth0LockInstance(options, clientID, domain, true);
   },
 
-  navigateToLogoutURL() {
-    const {
+  navigateToLogoutURL(logoutUrl) {
+    let {
       domain,
       logoutReturnToURL,
       clientID
     } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
+    
+    logoutReturnToURL = logoutUrl || logoutReturnToURL;
 
     if (!Ember.testing) {
       window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
   },
 
-  logout() {
-    get(this, 'session').invalidate().then(this.navigateToLogoutURL.bind(this));
+  logout(logoutUrl) {
+    get(this, 'session').invalidate().then(() => {
+      this.navigateToLogoutURL(logoutUrl);
+    });
   },
 
   _auth0: computed(function() {
