@@ -10,9 +10,7 @@ module.exports = {
       webpack: {
         plugins: [
           new webpack.DefinePlugin({
-            'process.env': {
-              NODE_ENV: JSON.stringify(EmberAddon.env())
-            }
+            'process.env.NODE_ENV': JSON.stringify(EmberAddon.env())
           })
         ]
       }
