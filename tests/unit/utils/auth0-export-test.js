@@ -3,7 +3,7 @@ import {
   module
 } from 'qunit';
 import auth0Lock from 'auth0-lock';
-import auth0 from 'auth0';
+import auth0 from 'auth0-js';
 
 module('Unit | moment exports', function() {
   test('auth0 exports', (assert) => {

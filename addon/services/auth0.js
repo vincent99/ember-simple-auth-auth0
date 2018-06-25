@@ -5,7 +5,7 @@ import { assert } from '@ember/debug';
 import { isEmpty } from '@ember/utils';
 import Service, { inject as service } from '@ember/service';
 import RSVP from 'rsvp';
-import Auth0 from 'auth0';
+import Auth0 from 'auth0-js';
 import { Auth0Lock, Auth0LockPasswordless } from 'auth0-lock';
 import createSessionDataObject from '../utils/create-session-data-object';
 import { Auth0Error } from '../utils/errors'
@@ -110,7 +110,7 @@ export default Service.extend({
       logoutReturnToURL,
       clientID
     } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
-    
+
     logoutReturnToURL = logoutUrl || logoutReturnToURL;
 
     if (!this.get('inTesting')) {

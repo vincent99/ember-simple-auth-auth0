@@ -21,7 +21,6 @@
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
-    "broccoli-stew": "^1.5.0",
     "dotenv": "^4.0.0",
     "ember-ajax": "^3.0.0",
     "ember-cli": "~3.1.4",
@@ -76,13 +75,9 @@
   "dependencies": {
     "auth0-js": "^9.3.3",
     "auth0-lock": "^11.4.0",
-    "broccoli-funnel": "^1.1.0",
-    "broccoli-merge-trees": "^2.0.0",
-    "broccoli-webpack": "^1.0.0",
-    "webpack": "^1.12.14",
+    "ember-auto-import": "^1.0.0",
     "ember-cli-babel": "^6.6.0",
-    "ember-simple-auth": "^1.6.0",
-    "rsvp": "^3.3.3"
+    "ember-simple-auth": "^1.6.0"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config",
