@@ -61,10 +61,7 @@ export default Service.extend({
   },
 
   _setupLock(lock, resolve, reject) {
-    lock.on('unrecoverable_error', reject);
-    lock.on('authorization_error', reject);
-
-    // lock.on('hash_parsed', resolve);
+    lock.on('hide', reject);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
         return reject(new Auth0Error('The authenticated data did not come back from the request'));
