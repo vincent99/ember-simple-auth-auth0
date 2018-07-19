@@ -95,7 +95,7 @@ module('Unit | Service | auth0', function(hooks) {
     stubbedLock.trigger('authenticated', authenticatedData);
   });
 
-  test('showLock rejects when receiving an unrecoverable_error', function(assert) {
+  test('showLock rejects when hidden', function(assert) {
     assert.expect(1);
     const done = assert.async();
     const stubbedLock = new StubLock();
@@ -108,23 +108,7 @@ module('Unit | Service | auth0', function(hooks) {
       .catch(() => assert.ok(true))
       .finally(done);
 
-    stubbedLock.trigger('unrecoverable_error', new Error());
-  });
-
-  test('showLock rejects when receiving an authorization_error', function(assert) {
-    assert.expect(1);
-    const done = assert.async();
-    const stubbedLock = new StubLock();
-    const subject = this.owner.factoryFor('service:auth0').create({
-      getAuth0LockInstance: this.stubLock(stubbedLock)
-    });
-
-    subject.showLock()
-      .then(() => assert.notOk(true))
-      .catch(() => assert.ok(true))
-      .finally(done);
-
-    stubbedLock.trigger('authorization_error', new Error());
+    stubbedLock.trigger('hide', new Error());
   });
 
   test('showLock rejects when authenticatedData does not exist', function(assert) {
