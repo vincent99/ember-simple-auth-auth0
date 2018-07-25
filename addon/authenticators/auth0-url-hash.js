@@ -11,19 +11,26 @@ export default Auth0BaseAuthenticator.extend({
   session: service(),
   authenticate(urlHashData) {
     return new RSVP.Promise((resolve, reject) => {
-      if (isEmpty(urlHashData)) {
-        reject();
-      }
-      const auth0 = get(this, 'auth0').getAuth0Instance();
-      const getUserInfo = auth0.client.userInfo.bind(auth0.client);
-
-      getUserInfo(urlHashData.accessToken, (err, profile) => {
-        if (err) {
-          return reject(new Auth0Error(err));
-        }
-
-        resolve(createSessionDataObject(profile, urlHashData));
-      });
+      this._resolveAuthResult(urlHashData, resolve, reject);
     });
   },
+
+  // resolve the data returned by a parseHash/silentAuth result.
+  // this is split into its own function since the silent-auth
+  // authenticator uses it as well.
+  _resolveAuthResult(authResult, resolve, reject) {
+    if (isEmpty(authResult)) {
+      reject();
+    }
+    const auth0 = get(this, 'auth0').getAuth0Instance();
+    const getUserInfo = auth0.client.userInfo.bind(auth0.client);
+
+    getUserInfo(authResult.accessToken, (err, profile) => {
+      if (err) {
+        return reject(new Auth0Error(err));
+      }
+
+      resolve(createSessionDataObject(profile, authResult));
+    });
+  }
 });

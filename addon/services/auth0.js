@@ -46,7 +46,40 @@ export default Service.extend({
    */
   domain: readOnly('config.domain'),
 
+  /**
+   * The URL to return to when logging out
+   * @type {String}
+   */
   logoutReturnToURL: readOnly('config.logoutReturnToURL'),
+
+  /**
+   * Perform Silent Authentication with Auth0's checkSession() method.
+   * Returns the authenticated data if successful, or rejects if not.
+   * 
+   * This method does NOT actually create an ember-simple-auth session;
+   * use the authenticator rather than calling this directly.
+   *
+   * @method silentAuth
+   */
+  silentAuth(options) {
+    return new RSVP.Promise((resolve, reject) => {
+      const auth0 = this.getAuth0Instance();
+      auth0.checkSession(options, (err, data) => {
+        if(!err) {
+          // special check: running this with Ember Inspector active
+          // results in an ember version object getting returned for
+          // some oddball reason. Reject and warn the user (dev?).
+          if(data && get(data, 'type') === 'emberVersion') {
+            reject(new Auth0Error('Silent Authentication is not supported when Ember Inspector is enabled. Please disable the extension to re-enable support.'));
+          } else {
+            resolve(data);
+          }
+        } else {
+          reject(new Auth0Error(err));
+        }
+      });
+    });
+  },
 
   showLock(options, clientID = null, domain = null, passwordless = false) {
     return new RSVP.Promise((resolve, reject) => {
