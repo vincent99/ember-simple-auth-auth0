@@ -99,7 +99,10 @@ export default Mixin.create(ApplicationRouteMixin, {
       return;
     }
 
-    this._scheduleExpire();
+    // [XA] only actually schedule expired events if we're authenticated.
+    if (get(this, 'session.isAuthenticated')) {
+      this._scheduleExpire();
+    }
   },
 
   _scheduleExpire() {
