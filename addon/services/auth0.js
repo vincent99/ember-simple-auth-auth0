@@ -1,28 +1,23 @@
-import Ember from 'ember';
-import Auth0 from 'auth0';
+import { readOnly } from '@ember/object/computed';
+import { getOwner } from '@ember/application';
+import { getProperties, get, computed } from '@ember/object';
+import { assert } from '@ember/debug';
+import { isEmpty } from '@ember/utils';
+import Service, { inject as service } from '@ember/service';
+import RSVP from 'rsvp';
+import Auth0 from 'auth0-js';
 import { Auth0Lock, Auth0LockPasswordless } from 'auth0-lock';
 import createSessionDataObject from '../utils/create-session-data-object';
 import { Auth0Error } from '../utils/errors'
 
-const {
-  Service,
-  computed,
-  computed: {
-    readOnly,
-  },
-  get,
-  getOwner,
-  getProperties,
-  assert,
-  isEmpty,
-  inject: {
-    service
-  },
-  RSVP,
-} = Ember;
-
 export default Service.extend({
   session: service(),
+
+  inTesting: computed(function() {
+    let config = getOwner(this).resolveRegistration('config:environment');
+    return config.environment === 'test';
+  }),
+
   /**
    * The env config found in the environment config.
    * ENV['ember-simple-auth'].auth0
@@ -66,10 +61,7 @@ export default Service.extend({
   },
 
   _setupLock(lock, resolve, reject) {
-    lock.on('unrecoverable_error', reject);
-    lock.on('authorization_error', reject);
-
-    // lock.on('hash_parsed', resolve);
+    lock.on('hide', reject);
     lock.on('authenticated', (authenticatedData) => {
       if (isEmpty(authenticatedData)) {
         return reject(new Auth0Error('The authenticated data did not come back from the request'));
@@ -109,20 +101,24 @@ export default Service.extend({
     return this.getAuth0LockInstance(options, clientID, domain, true);
   },
 
-  navigateToLogoutURL() {
-    const {
+  navigateToLogoutURL(logoutUrl) {
+    let {
       domain,
       logoutReturnToURL,
       clientID
     } = getProperties(this, 'domain', 'logoutReturnToURL', 'clientID');
 
-    if (!Ember.testing) {
+    logoutReturnToURL = logoutUrl || logoutReturnToURL;
+
+    if (!this.get('inTesting')) {
       window.location.replace(`https://${domain}/v2/logout?returnTo=${logoutReturnToURL}&client_id=${clientID}`);
     }
   },
 
-  logout() {
-    get(this, 'session').invalidate().then(this.navigateToLogoutURL.bind(this));
+  logout(logoutUrl) {
+    get(this, 'session').invalidate().then(() => {
+      this.navigateToLogoutURL(logoutUrl);
+    });
   },
 
   _auth0: computed(function() {

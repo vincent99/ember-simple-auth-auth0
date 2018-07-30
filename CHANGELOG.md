@@ -1,6 +1,20 @@
 Changelog
 =========
 
+## v4.1.0 (July 30th, 2018)
+
+## Say Hello to ember-auto-import!
+
+- Replaced broccoli-webpack with [ember-auto-import](https://github.com/ef4/ember-auto-import) -- the build is now 100% more sane!
+- The change should be transparent in consuming apps, though this does fix some recently-reported build issues so you may wish to upgrade anyway.
+
+### Pull Requests
+
+- [#121](https://github.com/auth0-community/ember-simple-auth-auth0/pull/121)  allow for a logoutUrl override  *by [Miguel Andrade](https://github.com/miguelcobain)*
+- [#123](https://github.com/auth0-community/ember-simple-auth-auth0/pull/123)  update ember-cli [tests, linting, modules api, etc]  *by [Miguel Andrade](https://github.com/miguelcobain)*
+- [#126](https://github.com/auth0-community/ember-simple-auth-auth0/pull/126)  use ember-auto-import  *by [Miguel Andrade](https://github.com/miguelcobain)*
+- [#130](https://github.com/auth0-community/ember-simple-auth-auth0/pull/130)  Fix failed login causing promise to never resolve  *by [Xaser Acheron](https://github.com/XaserAcheron)*
+
 ## v4.0.2 (April 4th, 2018)
 
 ### Pull Requests
