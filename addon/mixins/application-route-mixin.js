@@ -73,6 +73,10 @@ export default Mixin.create(ApplicationRouteMixin, {
   },
 
   _getUrlHashData() {
+    if (typeof FastBoot !== "undefined") {
+      return RSVP.resolve();
+    }
+
     const auth0 = get(this, 'auth0').getAuth0Instance();
     const enableImpersonation = !!get(this, 'auth0.config.enableImpersonation');
     return new RSVP.Promise((resolve, reject) => {

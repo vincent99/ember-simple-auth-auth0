@@ -78,6 +78,10 @@ export default Service.extend({
   },
 
   getAuth0LockInstance(options, clientID = null, domain = null, passwordless = false) {
+    if (typeof FastBoot !== "undefined") {
+      return RSVP.resolve();
+    }
+
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
     const Auth0LockConstructor = get(this, passwordless ? '_auth0LockPasswordless' : '_auth0Lock');
@@ -86,6 +90,10 @@ export default Service.extend({
   },
 
   getAuth0Instance(clientID = null, domain = null) {
+    if (typeof FastBoot !== "undefined") {
+      return RSVP.resolve();
+    }
+
     clientID = clientID || get(this, 'clientID');
     domain = domain || get(this, 'domain');
 

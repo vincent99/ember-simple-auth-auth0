@@ -1,8 +1,8 @@
 export default function semver(v1, v2, options) {
   const lexicographical = options && options.lexicographical;
   const zeroExtend = options && options.zeroExtend;
-  let v1parts = v1.split('.');
-  let v2parts = v2.split('.');
+  let v1parts = (v1 || '').split('.');
+  let v2parts = (v2 || '').split('.');
 
   function isValidPart(x) {
     return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
